@@ -12,6 +12,9 @@ export const metadata: Metadata = {
   description:
     "Portfolio dari Alexander Ollyvio Kristo Sentono, mahasiswa Informatika Universitas Atma Jaya Yogyakarta yang passionate tentang web development dan cybersecurity.",
   generator: "v0.app",
+  icons: {
+    icon: "/logo-ax.png",
+  },
 };
 
 // penting untuk mobile
