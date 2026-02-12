@@ -471,7 +471,7 @@ function MemoryCard({
 
           {/* Back */}
           <div className="absolute inset-0 flex items-center justify-center rounded-2xl border border-white/10 bg-black/25 [transform:rotateY(180deg)] [backface-visibility:hidden]">
-            <div className="text-4xl sm:text-5xl">{card.emoji}</div>
+            <div className="text-5xl" suppressHydrationWarning>{card.emoji}</div>
           </div>
         </div>
       </div>
