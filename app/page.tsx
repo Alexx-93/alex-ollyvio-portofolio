@@ -10,6 +10,7 @@ import Hobbies from "@/components/hobbies" // Added Hobbies import
 import TechStack from "@/components/tech-stack"
 import Contact from "@/components/contact"
 import Footer from "@/components/footer"
+import EndGamePage from "@/components/endGame"
 
 export default function Home() {
   const [activeSection, setActiveSection] = useState("home")
@@ -49,6 +50,7 @@ export default function Home() {
       <Hobbies /> {/* Added Hobbies section before tech stack */}
       <TechStack />
       <Contact />
+      <EndGamePage/>
       <Footer />
     </div>
   )

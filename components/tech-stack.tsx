@@ -1,62 +1,196 @@
-"use client"
+"use client";
+
+import React from "react";
+import { motion, useReducedMotion } from "framer-motion";
+
+const techs = [
+  { name: "React", icon: "⚛️" },
+  { name: "Next.js", icon: "▲" },
+  { name: "Node / Express", icon: "🟢" },
+  { name: "SQL", icon: "🗄️" },
+  { name: "HTML", icon: "🔤" },
+  { name: "CSS", icon: "🎨" },
+  { name: "Figma", icon: "✏️" },
+  { name: "Linux", icon: "🐧" },
+  { name: "VS Code", icon: "💻" },
+  { name: "GitHub", icon: "🐙" },
+  { name: "Postman", icon: "📮" },
+];
+
+const EASE = [0.22, 1, 0.36, 1] as const;
 
 export default function TechStack() {
-  const techs = [
-    { name: "React JS", icon: "⚛️" },
-    { name: "Next.js", icon: "▲" },
-    { name: "Node/Express", icon: "🟢" },
-    { name: "SQL", icon: "🗄️" },
-    { name: "HTML", icon: "🔤" },
-    { name: "CSS", icon: "🎨" },
-    { name: "Figma", icon: "✏️" },
-    { name: "Linux", icon: "🐧" },
-    { name: "VSCode", icon: "💻" },
-    { name: "GitHub", icon: "🐙" },
-    { name: "Postman", icon: "📮" },
-  ]
+  const reduceMotion = useReducedMotion();
+
+  const gridVariants = {
+    hidden: {},
+    show: reduceMotion
+      ? {}
+      : {
+          transition: {
+            staggerChildren: 0.06,
+            delayChildren: 0.08,
+          },
+        },
+  };
+
+  const cardVariants = {
+    hidden: reduceMotion ? { opacity: 1 } : { opacity: 0, y: 18, filter: "blur(6px)" },
+    show: reduceMotion
+      ? { opacity: 1 }
+      : {
+          opacity: 1,
+          y: 0,
+          filter: "blur(0px)",
+          transition: { duration: 0.7, ease: EASE },
+        },
+  };
 
   return (
-    <section
-      id="tech-stack"
-      className="py-20 px-4 bg-background/50 relative overflow-hidden flex items-center justify-center"
-    >
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-1/2 -right-1/2 w-96 h-96 bg-amber-500/10 dark:bg-amber-500/5 rounded-full blur-3xl animate-float"></div>
-        <div className="absolute -bottom-1/2 -left-1/2 w-96 h-96 bg-sky-500/10 dark:bg-sky-500/5 rounded-full blur-3xl animate-float-slow"></div>
+    <section id="tech-stack" className="relative overflow-hidden px-6 py-24">
+      {/* ambient bg */}
+      <div className="pointer-events-none absolute inset-0 -z-10">
+        <div className="absolute inset-0 bg-[radial-gradient(1200px_700px_at_50%_0%,rgba(255,255,255,0.06),transparent_60%)]" />
+        <motion.div
+          className="absolute -top-24 -left-24 h-[420px] w-[420px] rounded-full bg-cyan-400/8 blur-3xl"
+          animate={
+            reduceMotion
+              ? undefined
+              : { x: [0, 16, 0], y: [0, -10, 0], scale: [1, 1.05, 1] }
+          }
+          transition={reduceMotion ? undefined : { duration: 10, repeat: Infinity, ease: "easeInOut" }}
+        />
+        <motion.div
+          className="absolute bottom-[-180px] right-[-180px] h-[640px] w-[640px] rounded-full bg-violet-400/8 blur-3xl"
+          animate={
+            reduceMotion
+              ? undefined
+              : { x: [0, -16, 0], y: [0, 12, 0], scale: [1, 1.06, 1] }
+          }
+          transition={reduceMotion ? undefined : { duration: 11, repeat: Infinity, ease: "easeInOut" }}
+        />
+        <div className="absolute inset-0 opacity-[0.10] [background-image:linear-gradient(to_right,rgba(255,255,255,0.10)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.10)_1px,transparent_1px)] [background-size:70px_70px]" />
       </div>
 
-      <div className="max-w-6xl mx-auto relative z-10 w-full">
-        <h2 className="text-4xl font-bold text-foreground mb-4 text-center animate-slide-up animate-text-glow">
-          Tech <span className="text-amber-600 dark:text-amber-400 animate-neon-flicker">Stack</span>
-        </h2>
-        <p
-          className="text-center text-foreground/60 mb-12 max-w-2xl mx-auto animate-slide-up"
-          style={{ animationDelay: "50ms" }}
+      <div className="relative mx-auto w-full max-w-[1200px]">
+        {/* header */}
+        <motion.div
+          initial={reduceMotion ? undefined : { opacity: 0, y: 14 }}
+          whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.35 }}
+          transition={{ duration: 0.75, ease: EASE }}
+          className="mb-12"
         >
-          Tools and technologies I work with
-        </p>
-
-        <div className="flex justify-center">
-          <div className="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-4 w-fit place-items-center">
-            {techs.map((tech, index) => (
-              <div
-                key={index}
-                className="bg-card border-2 border-amber-500/20 dark:border-amber-500/30 rounded-xl p-6 flex flex-col items-center justify-center gap-3 hover:border-amber-500/70 hover:shadow-2xl hover:shadow-amber-500/20 transition-all duration-300 group cursor-pointer animate-scale-in relative overflow-hidden hover:-translate-y-2 w-full"
-                style={{ animationDelay: `${index * 50}ms` }}
-              >
-                <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 to-sky-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-
-                <div className="absolute -inset-full bg-gradient-to-r from-transparent via-amber-500/20 to-transparent opacity-0 group-hover:opacity-100"></div>
-
-                <div className="text-4xl transition-all duration-300 relative z-10">{tech.icon}</div>
-                <p className="text-sm font-semibold text-foreground/70 text-center group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors relative z-10 group-hover:animate-text-glow animate-slide-up">
-                  {tech.name}
-                </p>
-              </div>
-            ))}
+          <div className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/5 px-4 py-2 backdrop-blur-md">
+            <span className="h-1.5 w-1.5 rounded-full bg-cyan-300 shadow-[0_0_16px_rgba(34,211,238,0.55)]" />
+            <span className="text-[11px] font-semibold tracking-[0.22em] uppercase text-foreground/70">
+              Tech Stack
+            </span>
           </div>
-        </div>
+
+          <h2 className="mt-4 text-balance text-3xl font-semibold tracking-tight text-foreground md:text-5xl">
+            Tools I{" "}
+            <span className="bg-gradient-to-r from-cyan-300 via-sky-300 to-violet-300 bg-clip-text text-transparent">
+              work
+            </span>{" "}
+            with
+          </h2>
+
+          <p className="mt-3 max-w-2xl text-base leading-relaxed text-foreground/70 md:text-lg">
+            A focused set of technologies I use to design, build, test, and ship products.
+          </p>
+        </motion.div>
+
+        {/* grid */}
+        <motion.div
+          variants={gridVariants}
+          initial={reduceMotion ? undefined : "hidden"}
+          whileInView={reduceMotion ? undefined : "show"}
+          viewport={{ once: true, amount: 0.25 }}
+          className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6"
+        >
+          {techs.map((t) => (
+            <motion.div
+              key={t.name}
+              variants={cardVariants}
+              whileHover={
+                reduceMotion
+                  ? undefined
+                  : {
+                      y: -6,
+                      transition: { duration: 0.22, ease: EASE },
+                    }
+              }
+              whileTap={reduceMotion ? undefined : { scale: 0.98 }}
+              className="group relative overflow-hidden rounded-3xl border border-white/12 bg-white/5 p-5 backdrop-blur-xl
+                         shadow-[0_20px_70px_rgba(0,0,0,0.25)]
+                         transition-colors duration-300 hover:bg-white/8 hover:border-white/18"
+            >
+              {/* hover outline */}
+              <div className="pointer-events-none absolute inset-0 rounded-3xl ring-1 ring-white/0 transition group-hover:ring-white/12" />
+
+              {/* top highlight */}
+              <div className="pointer-events-none absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-white/10 to-transparent opacity-60" />
+
+              {/* straight shimmer (NOT miring) */}
+              {!reduceMotion && (
+                <motion.div
+                  aria-hidden
+                  className="pointer-events-none absolute inset-x-0 -top-1 h-[2px] bg-gradient-to-r from-transparent via-white/35 to-transparent opacity-0 group-hover:opacity-100"
+                  animate={{ x: ["-30%", "30%", "-30%"] }}
+                  transition={{ duration: 1.2, repeat: Infinity, ease: "easeInOut" }}
+                />
+              )}
+
+              <div className="relative flex flex-col items-center justify-center gap-3 text-center">
+                {/* icon: spring pop on hover (lebih “premium”), idle micro-float */}
+                <motion.div
+                  className="text-4xl leading-none"
+                  animate={reduceMotion ? undefined : { y: [0, -2, 0] }}
+                  transition={
+                    reduceMotion ? undefined : { duration: 3.2, repeat: Infinity, ease: "easeInOut" }
+                  }
+                  whileHover={
+                    reduceMotion
+                      ? undefined
+                      : {
+                          scale: 1.08,
+                          transition: { type: "spring", stiffness: 420, damping: 18 },
+                        }
+                  }
+                >
+                  {t.icon}
+                </motion.div>
+
+                {/* label: slide-up + fade slightly */}
+                <motion.div
+                  className="text-xs font-semibold tracking-[0.14em] uppercase text-foreground/70 transition-colors group-hover:text-foreground"
+                  initial={false}
+                  whileHover={reduceMotion ? undefined : { y: -1, opacity: 0.95 }}
+                  transition={{ duration: 0.2, ease: EASE }}
+                >
+                  {t.name}
+                </motion.div>
+              </div>
+
+              {/* bottom hairline */}
+              <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/18 to-transparent opacity-80" />
+
+              {/* subtle “breathing” highlight */}
+              {!reduceMotion && (
+                <motion.div
+                  aria-hidden
+                  className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100"
+                  animate={{ opacity: [0.12, 0.22, 0.12] }}
+                  transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+                >
+                  <div className="absolute inset-0 bg-white/5" />
+                </motion.div>
+              )}
+            </motion.div>
+          ))}
+        </motion.div>
       </div>
     </section>
-  )
+  );
 }
