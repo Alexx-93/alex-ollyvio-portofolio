@@ -250,7 +250,7 @@ export default function Hero({ setActiveSection }: { setActiveSection: (section:
             </h1>
 
             <p className="max-w-[56ch] text-base leading-relaxed text-white/70 sm:text-lg">
-              Informatics student at Universitas Atma Jaya Yogyakarta focused on web development and cybersecurity, specializing in frontend and UI/UX. Committed to building modern, secure, and user-centered digital systems.
+              Computer science student at Universitas Atma Jaya Yogyakarta focused on web development and cybersecurity, specializing in frontend and UI/UX. Committed to building modern, secure, and user-centered digital systems.
             </p>
 
             {/* ✅ CTAs: mobile stack, sm+ sejajar */}
