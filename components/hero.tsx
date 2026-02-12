@@ -250,12 +250,11 @@ export default function Hero({ setActiveSection }: { setActiveSection: (section:
             </h1>
 
             <p className="max-w-[56ch] text-base leading-relaxed text-white/70 sm:text-lg">
-              Computer Science student at Universitas Atma Jaya Yogyakarta. Building modern web systems with strong
-              fundamentals, clean UI, and reliable backend architecture.
+              Informatics student at Universitas Atma Jaya Yogyakarta focused on web development and cybersecurity, specializing in frontend and UI/UX. Committed to building modern, secure, and user-centered digital systems.
             </p>
 
             {/* ✅ CTAs: mobile stack, sm+ sejajar */}
-            <motion.div 
+            <motion.div
               className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center"
               initial={reduceMotion ? undefined : { opacity: 0, y: 10 }}
               animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
@@ -327,9 +326,9 @@ export default function Hero({ setActiveSection }: { setActiveSection: (section:
             {/* ✅ stats: 1 kolom di mobile, 3 kolom di sm+ */}
             <div className="grid max-w-xl grid-cols-1 gap-3 sm:grid-cols-3">
               {[
-                { label: "Projects", value: 12 },
+                { label: "Projects", value: 7 },
                 { label: "Stacks", value: 6 },
-                { label: "Experiences", value: 3 },
+                { label: "Experiences", value: 2 },
               ].map((s) => (
                 <div
                   key={s.label}
