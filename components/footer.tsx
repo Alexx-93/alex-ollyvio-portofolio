@@ -90,16 +90,16 @@ export default function Footer() {
         <div className="absolute inset-0 opacity-[0.10] [background-image:linear-gradient(to_right,rgba(255,255,255,0.10)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.10)_1px,transparent_1px)] [background-size:70px_70px]" />
       </div>
 
-      <div className="relative mx-auto w-full max-w-[1200px]">
+      <div className="relative mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-8">
         <motion.div
           variants={wrap}
           initial={reduceMotion ? undefined : "hidden"}
           whileInView={reduceMotion ? undefined : "show"}
           viewport={{ once: true, amount: 0.25 }}
-          className="grid gap-10 md:grid-cols-3"
+          className="grid gap-6 sm:gap-8 md:grid-cols-3 md:gap-10"
         >
           {/* Brand */}
-          <motion.div variants={item} className="space-y-4">
+          <motion.div variants={item} className="space-y-3 sm:space-y-4">
             <div className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/5 px-4 py-2 backdrop-blur-md">
               <motion.span
                 className="h-1.5 w-1.5 rounded-full bg-cyan-300 shadow-[0_0_16px_rgba(34,211,238,0.55)]"
@@ -111,11 +111,11 @@ export default function Footer() {
               </span>
             </div>
 
-            <h3 className="text-xl font-semibold tracking-tight text-foreground">
+            <h3 className="text-lg font-semibold tracking-tight text-foreground sm:text-xl">
               Alexander Ollyvio
             </h3>
 
-            <p className="max-w-sm text-sm leading-relaxed text-foreground/70">
+            <p className="max-w-sm text-xs leading-relaxed text-foreground/70 sm:text-sm">
               Computer Science student at Universitas Atma Jaya Yogyakarta. Interested in web systems and cybersecurity,
               focused on building clean, reliable products.
             </p>
@@ -205,9 +205,9 @@ export default function Footer() {
         </motion.div>
 
         {/* bottom */}
-        <div className="mt-12 border-t border-white/10 pt-8">
-          <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
-            <p className="text-xs text-foreground/60">
+        <div className="mt-8 border-t border-white/10 pt-6 sm:mt-10 sm:pt-8 lg:mt-12">
+          <div className="flex flex-col items-center justify-between gap-3 sm:gap-4 sm:flex-row">
+            <p className="text-[11px] text-foreground/60 sm:text-xs">
               © {currentYear} Alexander Ollyvio Kristo Sentono.
             </p>
 
@@ -215,9 +215,8 @@ export default function Footer() {
               href="#top"
               whileHover={reduceMotion ? undefined : { y: -2 }}
               transition={{ duration: 0.2, ease: EASE }}
-              className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/5 px-4 py-2
-                         text-xs font-semibold text-foreground/70 backdrop-blur-md
-                         hover:bg-white/10 hover:text-foreground hover:border-white/18 transition-colors"
+              className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/5 px-3 py-2 text-xs font-semibold text-foreground/70 backdrop-blur-md
+                         transition-colors hover:border-white/18 hover:bg-white/10 hover:text-foreground sm:px-4"
             >
               Back to top
               <ArrowUpRight className="h-4 w-4" />

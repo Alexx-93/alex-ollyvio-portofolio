@@ -213,14 +213,14 @@ export default function Certificates() {
         <div className="absolute inset-0 opacity-[0.10] [background-image:linear-gradient(to_right,rgba(255,255,255,0.10)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.10)_1px,transparent_1px)] [background-size:70px_70px]" />
       </div>
 
-      <div className="relative mx-auto w-full max-w-[1200px]">
+      <div className="relative mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-8">
         {/* header */}
         <motion.div
           initial={reduceMotion ? undefined : { opacity: 0, y: 14 }}
           whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.35 }}
           transition={{ duration: 0.75, ease: EASE }}
-          className="mb-12"
+          className="mb-8 sm:mb-12"
         >
           <div className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/5 px-4 py-2 backdrop-blur-md">
             <span className="h-1.5 w-1.5 rounded-full bg-cyan-300 shadow-[0_0_16px_rgba(34,211,238,0.55)]" />
@@ -247,7 +247,7 @@ export default function Certificates() {
             - content: flex-1 + min height pada judul => bagian bawah rata
             - thumbnail: aspect konsisten
         */}
-        <div className="grid auto-rows-fr grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid auto-rows-fr grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 lg:gap-6">
           {certificates.map((cert, idx) => {
             const tilt = useCardTilt(reduceMotion, 7);
             const zoomBtn = useMagnet();
@@ -265,9 +265,9 @@ export default function Certificates() {
                   ref={tilt.ref}
                   onMouseMove={reduceMotion ? undefined : tilt.onMove}
                   onMouseLeave={reduceMotion ? undefined : tilt.onLeave}
-                  className="relative flex h-full flex-col overflow-hidden rounded-3xl border border-white/12 bg-white/5 backdrop-blur-xl
-                             shadow-[0_25px_90px_rgba(0,0,0,0.35)]
-                             transition-colors duration-300 hover:bg-white/8 hover:border-white/18"
+                  className="relative flex h-full flex-col overflow-hidden rounded-2xl border border-white/12 bg-white/5 backdrop-blur-xl
+                             shadow-[0_15px_50px_rgba(0,0,0,0.2)] transition-colors duration-300 hover:border-white/18 hover:bg-white/8
+                             sm:rounded-3xl sm:shadow-[0_25px_90px_rgba(0,0,0,0.35)]"
                   style={{
                     transform: "perspective(1000px) rotateX(0deg) rotateY(0deg)",
                   }}
@@ -320,26 +320,26 @@ export default function Certificates() {
                   </div>
 
                   {/* content (flex-1 biar konsisten) */}
-                  <div className="flex flex-1 flex-col p-6">
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="inline-flex min-h-[32px] items-center gap-2 rounded-full border border-white/12 bg-white/0 px-3 py-1 text-[11px] font-semibold text-foreground/70">
-                        <Award className="h-4 w-4 shrink-0 text-cyan-300/90" />
+                  <div className="flex flex-1 flex-col p-4 sm:p-6">
+                    <div className="flex flex-col items-start gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+                      <div className="inline-flex min-h-[28px] items-center gap-2 rounded-full border border-white/12 bg-white/0 px-2 py-1 text-[10px] font-semibold text-foreground/70 sm:min-h-[32px] sm:px-3 sm:text-[11px]">
+                        <Award className="h-3 w-3 shrink-0 text-cyan-300/90 sm:h-4 sm:w-4" />
                         <span className="line-clamp-1">{cert.title}</span>
                       </div>
 
-                      <div className="inline-flex min-h-[32px] items-center gap-2 text-[11px] font-semibold text-foreground/60">
-                        <Calendar className="h-4 w-4 shrink-0 text-violet-300/90" />
+                      <div className="inline-flex min-h-[28px] items-center gap-2 text-[10px] font-semibold text-foreground/60 sm:min-h-[32px] sm:text-[11px]">
+                        <Calendar className="h-3 w-3 shrink-0 text-violet-300/90 sm:h-4 sm:w-4" />
                         <span className="max-w-[10rem] truncate">{cert.date}</span>
                       </div>
                     </div>
 
                     {/* min height supaya semua card "rata" walau teks beda panjang */}
-                    <h3 className="mt-4 min-h-[48px] line-clamp-2 text-base font-semibold text-foreground md:text-lg">
+                    <h3 className="mt-3 min-h-[44px] line-clamp-2 text-sm font-semibold text-foreground sm:mt-4 sm:min-h-[48px] sm:text-base md:text-lg">
                       {cert.event}
                     </h3>
 
                     {/* push bottom divider to bottom */}
-                    <div className="mt-auto pt-4">
+                    <div className="mt-auto pt-3 sm:pt-4">
                       <div className="h-px w-full bg-gradient-to-r from-transparent via-white/18 to-transparent opacity-70" />
                     </div>
                   </div>

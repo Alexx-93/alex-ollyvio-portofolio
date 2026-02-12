@@ -222,7 +222,7 @@ export default function Hero({ setActiveSection }: { setActiveSection: (section:
       <div className="pointer-events-none absolute -left-24 top-20 -z-10 h-[420px] w-[420px] rounded-full bg-cyan-400/10 blur-3xl" />
       <div className="pointer-events-none absolute -right-28 bottom-10 -z-10 h-[520px] w-[520px] rounded-full bg-violet-400/10 blur-3xl" />
 
-      <div className="mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full max-w-[1200px] px-4 py-4 sm:px-6 sm:py-6 lg:px-8">
         <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-12">
           {/* left */}
           <motion.div

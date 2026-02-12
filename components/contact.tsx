@@ -83,16 +83,16 @@ export default function Contact() {
         <div className="absolute inset-0 opacity-[0.10] [background-image:linear-gradient(to_right,rgba(255,255,255,0.10)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.10)_1px,transparent_1px)] [background-size:70px_70px]" />
       </div>
 
-      <div className="relative mx-auto max-w-[1100px]">
+      <div className="relative mx-auto w-full max-w-[1100px] px-4 sm:px-6 lg:px-8">
         <motion.div
           variants={container}
           initial={reduceMotion ? undefined : "hidden"}
           whileInView={reduceMotion ? undefined : "show"}
           viewport={{ once: true, amount: 0.35 }}
-          className="grid items-start gap-14 lg:grid-cols-2"
+          className="grid items-start gap-8 sm:gap-10 lg:grid-cols-2 lg:gap-12"
         >
           {/* LEFT */}
-          <motion.div variants={item} className="space-y-6">
+          <motion.div variants={item} className="space-y-4 sm:space-y-6">
             <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 backdrop-blur-md">
               <motion.span
                 className="h-1.5 w-1.5 rounded-full bg-cyan-300 shadow-[0_0_14px_rgba(34,211,238,0.6)]"
@@ -100,26 +100,26 @@ export default function Contact() {
                 transition={reduceMotion ? undefined : { duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
               />
               <span className="text-[11px] font-semibold tracking-[0.22em] uppercase text-foreground/70">
-                Let’s Connect
+                Let's Connect
               </span>
             </div>
 
-            <h2 className="text-4xl font-semibold tracking-tight text-foreground md:text-5xl">
+            <h2 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl md:text-5xl">
               Get in{" "}
               <span className="bg-gradient-to-r from-cyan-300 to-violet-300 bg-clip-text text-transparent">
                 Touch
               </span>
             </h2>
 
-            <p className="max-w-md text-base leading-relaxed text-foreground/70">
+            <p className="max-w-md text-sm leading-relaxed text-foreground/70 sm:text-base">
               Interested in collaborating, building something impactful, or just having a meaningful tech discussion?
-              I’m always open to new ideas and opportunities.
+              I'm always open to new ideas and opportunities.
             </p>
 
             {/* mini card */}
-            <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 px-5 py-4 backdrop-blur-xl">
+            <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 px-4 py-3 backdrop-blur-xl sm:rounded-3xl sm:px-5 sm:py-4">
               <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(600px_200px_at_20%_0%,rgba(255,255,255,0.10),transparent_60%)]" />
-              <p className="relative text-xs font-semibold tracking-[0.22em] uppercase text-foreground/60">
+              <p className="relative text-[11px] font-semibold tracking-[0.22em] uppercase text-foreground/60 sm:text-xs">
                 Availability
               </p>
               <p className="relative mt-1 text-sm text-foreground/80">
@@ -173,23 +173,23 @@ export default function Contact() {
                     />
                   )}
 
-                  <div className="relative flex items-center gap-4">
+                  <div className="relative flex items-center gap-3 sm:gap-4">
                     <motion.div
-                      className="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/5"
+                      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/5 sm:h-12 sm:w-12 sm:rounded-2xl"
                       whileHover={
                         contact.disabled || reduceMotion
                           ? undefined
                           : { scale: 1.06, transition: { type: "spring", stiffness: 420, damping: 18 } }
                       }
                     >
-                      <Icon className="h-5 w-5 text-foreground/80 transition-colors group-hover:text-foreground" />
+                      <Icon className="h-4 w-4 text-foreground/80 transition-colors group-hover:text-foreground sm:h-5 sm:w-5" />
                     </motion.div>
 
                     <div className="min-w-0">
-                      <p className="text-xs font-semibold tracking-[0.22em] uppercase text-foreground/60">
+                      <p className="text-[10px] font-semibold tracking-[0.22em] uppercase text-foreground/60 sm:text-xs">
                         {contact.label}
                       </p>
-                      <p className="truncate text-sm font-semibold text-foreground/85">
+                      <p className="truncate text-xs font-semibold text-foreground/85 sm:text-sm">
                         {contact.value}
                       </p>
                     </div>

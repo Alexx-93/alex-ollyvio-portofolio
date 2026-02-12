@@ -53,14 +53,14 @@ export default function Experience() {
         <div className="absolute inset-0 opacity-[0.10] [background-image:linear-gradient(to_right,rgba(255,255,255,0.10)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.10)_1px,transparent_1px)] [background-size:70px_70px]" />
       </div>
 
-      <div className="relative mx-auto w-full max-w-[1200px]">
+      <div className="relative mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-8">
         {/* header */}
         <motion.div
           initial={reduceMotion ? undefined : { opacity: 0, y: 14 }}
           whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.35 }}
           transition={{ duration: 0.75, ease: EASE }}
-          className="mb-12"
+          className="mb-8 sm:mb-12"
         >
           {/* ❌ remove glass: no bg translucent + no blur */}
           <div className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-transparent px-4 py-2">
@@ -124,9 +124,8 @@ export default function Experience() {
               <motion.div
                 whileHover={reduceMotion ? undefined : { y: -3 }}
                 transition={{ duration: 0.25 }}
-                className="group relative overflow-hidden rounded-3xl border border-white/12 bg-black/20 p-6
-                           shadow-[0_25px_90px_rgba(0,0,0,0.35)]
-                           transition-colors duration-300 hover:bg-black/28 hover:border-white/18"
+                className="group relative overflow-hidden rounded-2xl border border-white/12 bg-black/20 p-4 shadow-[0_20px_70px_rgba(0,0,0,0.3)]
+                           transition-colors duration-300 hover:border-white/18 hover:bg-black/28 sm:rounded-3xl sm:p-6 sm:shadow-[0_25px_90px_rgba(0,0,0,0.35)]"
               >
                 {/* hover glow (keep, bukan glass) */}
                 <div className="pointer-events-none absolute -inset-24 opacity-0 transition-opacity duration-500 group-hover:opacity-100 [background:radial-gradient(circle,rgba(34,211,238,0.18),transparent_55%)]" />
@@ -141,11 +140,11 @@ export default function Experience() {
                   </div>
                 )}
 
-                <div className="flex items-start gap-4">
+                <div className="flex items-start gap-3 sm:gap-4">
                   {/* icon */}
                   <div className="shrink-0">
                     {exp.isLogo ? (
-                      <div className="relative h-12 w-12 overflow-hidden rounded-2xl border border-white/12 bg-black/20">
+                      <div className="relative h-10 w-10 overflow-hidden rounded-xl border border-white/12 bg-black/20 sm:h-12 sm:w-12 sm:rounded-2xl">
                         <Image
                           src={exp.icon || "/placeholder.svg"}
                           alt={exp.company}
@@ -155,7 +154,7 @@ export default function Experience() {
                         />
                       </div>
                     ) : (
-                      <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/12 bg-black/20 text-2xl">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/12 bg-black/20 text-xl sm:h-12 sm:w-12 sm:rounded-2xl sm:text-2xl">
                         {exp.icon ?? "⭐"}
                       </div>
                     )}
@@ -163,9 +162,9 @@ export default function Experience() {
 
                   {/* main */}
                   <div className="min-w-0 flex-1">
-                    <h3 className="text-lg font-semibold text-foreground md:text-2xl">{exp.title}</h3>
+                    <h3 className="text-base font-semibold text-foreground sm:text-lg md:text-2xl">{exp.title}</h3>
 
-                    <div className="mt-2 flex flex-col gap-2 text-xs text-foreground/65 sm:flex-row sm:items-center sm:gap-4">
+                    <div className="mt-1 flex flex-col gap-2 text-[11px] text-foreground/65 sm:mt-2 sm:text-xs sm:flex-row sm:items-center sm:gap-4">
                       <div className="flex items-center gap-2">
                         <Building2 className="h-4 w-4 text-cyan-300/90" />
                         <span className="truncate font-semibold text-foreground/80">{exp.company}</span>
