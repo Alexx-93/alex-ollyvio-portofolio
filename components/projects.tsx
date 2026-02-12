@@ -2,6 +2,9 @@
 
 import { useState } from "react"
 import { ExternalLink, Github } from "lucide-react"
+import { motion } from "framer-motion"
+
+const EASE = [0.22, 1, 0.36, 1] as const
 
 export default function Projects() {
   const [activeFilter, setActiveFilter] = useState("all")
@@ -84,11 +87,23 @@ export default function Projects() {
           </p>
         </div>
 
-        <div className="mb-10 flex flex-wrap justify-center gap-2 sm:gap-3 md:mb-12 lg:mb-16">
-          {categories.map((cat) => (
-            <button
+        <motion.div 
+          className="mb-10 flex flex-wrap justify-center gap-2 sm:gap-3 md:mb-12 lg:mb-16"
+          initial={{ opacity: 0, y: -10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, ease: EASE }}
+        >
+          {categories.map((cat, idx) => (
+            <motion.button
               key={cat.value}
               onClick={() => setActiveFilter(cat.value)}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.98 }}
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: idx * 0.1, duration: 0.3, ease: EASE }}
               className={`rounded-full px-4 py-2 text-sm font-semibold transition-all sm:px-6 ${
                 activeFilter === cat.value
                   ? "bg-primary text-primary-foreground shadow-lg shadow-primary/30"
@@ -96,16 +111,34 @@ export default function Projects() {
               }`}
             >
               {cat.label}
-            </button>
+            </motion.button>
           ))}
-        </div>
+        </motion.div>
 
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
+        <motion.div 
+          className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8"
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true }}
+          variants={{
+            hidden: {},
+            show: {
+              transition: {
+                staggerChildren: 0.1,
+                delayChildren: 0.2,
+              },
+            },
+          }}
+        >
           {filteredProjects.map((project, index) => (
-            <div
+            <motion.div
               key={index}
               className="group flex flex-col overflow-hidden rounded-xl border border-border bg-card transition-all duration-300 hover:border-primary/50 hover:shadow-xl hover:shadow-primary/10"
-              style={{ animationDelay: `${index * 50}ms` }}
+              variants={{
+                hidden: { opacity: 0, y: 20 },
+                show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: EASE } },
+              }}
+              whileHover={{ y: -8 }}
             >
               <div className="relative h-40 overflow-hidden bg-muted sm:h-48">
                 <img
@@ -147,9 +180,9 @@ export default function Projects() {
                   </a>
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   )

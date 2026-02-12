@@ -268,10 +268,11 @@ export default function About() {
               <motion.div
                 key={i}
                 variants={fadeUp}
-                transition={{ duration: 0.75, ease: EASE }}
-                whileHover={reduceMotion ? undefined : { y: -2 }}
+                transition={{ duration: 0.75, ease: EASE, delay: i * 0.1 }}
+                whileHover={reduceMotion ? undefined : { y: -4, scale: 1.02 }}
+                whileInView={reduceMotion ? undefined : "show"}
                 className="rounded-2xl border border-white/12 bg-white/5 p-4 backdrop-blur-xl
-                           transition-colors hover:border-white/16 hover:bg-white/8 sm:rounded-3xl sm:p-6"
+                           transition-all hover:border-white/16 hover:bg-white/8 sm:rounded-3xl sm:p-6"
               >
                 <p className="text-sm leading-relaxed text-foreground/75 sm:text-base md:text-lg">{text}</p>
               </motion.div>
