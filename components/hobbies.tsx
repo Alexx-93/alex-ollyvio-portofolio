@@ -96,14 +96,14 @@ export default function Hobbies() {
         <div className="absolute inset-0 opacity-[0.10] [background-image:linear-gradient(to_right,rgba(255,255,255,0.10)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.10)_1px,transparent_1px)] [background-size:70px_70px]" />
       </div>
 
-      <div className="relative mx-auto max-w-[1300px]">
+      <div className="relative mx-auto w-full max-w-[1300px] px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div
           initial={reduceMotion ? undefined : { opacity: 0, y: 18 }}
           whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.8, ease: EASE }}
-          className="mb-16"
+          className="mb-10 sm:mb-12 lg:mb-16"
         >
           <div className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/5 px-4 py-2 backdrop-blur-md">
             <motion.span
@@ -120,21 +120,21 @@ export default function Hobbies() {
             </span>
           </div>
 
-          <h2 className="mt-6 text-4xl font-semibold tracking-tight text-foreground md:text-6xl">
+          <h2 className="mt-4 text-3xl font-semibold tracking-tight text-foreground sm:mt-6 sm:text-4xl md:text-6xl">
             The{" "}
             <span className="bg-gradient-to-r from-cyan-300 via-sky-300 to-violet-300 bg-clip-text text-transparent">
               Journey
             </span>
           </h2>
 
-          <p className="mt-4 max-w-2xl text-base text-foreground/70 md:text-lg">
+          <p className="mt-3 max-w-2xl text-sm text-foreground/70 sm:mt-4 sm:text-base md:text-lg">
             Moments from the peaks. Raw landscapes. Quiet discipline. Perspective
             beyond the screen.
           </p>
         </motion.div>
 
         {/* Masonry Grid */}
-        <div className="columns-1 gap-6 space-y-6 sm:columns-2 lg:columns-3">
+        <div className="columns-1 gap-4 space-y-4 sm:columns-2 sm:gap-5 sm:space-y-5 lg:columns-3 lg:gap-6 lg:space-y-6">
           {images.map((img, i) => (
             <motion.div
               key={img.src}
@@ -143,9 +143,9 @@ export default function Hobbies() {
               viewport={{ once: true, amount: 0.2 }}
               transition={{ duration: 0.7, delay: i * 0.06, ease: EASE }}
               whileHover={reduceMotion ? undefined : { y: -6 }}
-              className="group relative break-inside-avoid overflow-hidden rounded-3xl border border-white/12 bg-white/5 backdrop-blur-xl
-                         shadow-[0_25px_90px_rgba(0,0,0,0.35)]
-                         transition-all duration-500 hover:border-white/18 hover:bg-white/8 hover:shadow-[0_35px_120px_rgba(0,0,0,0.45)]"
+              className="group relative break-inside-avoid overflow-hidden rounded-2xl border border-white/12 bg-white/5 backdrop-blur-xl
+                         shadow-[0_15px_50px_rgba(0,0,0,0.2)] transition-all duration-500 hover:border-white/18 hover:bg-white/8 hover:shadow-[0_25px_80px_rgba(0,0,0,0.35)]
+                         sm:rounded-3xl sm:shadow-[0_25px_90px_rgba(0,0,0,0.35)]"
             >
               <div className="relative">
                 <Image
@@ -175,8 +175,8 @@ export default function Hobbies() {
                 )}
 
                 {/* Hover caption */}
-                <div className="absolute bottom-5 left-5 right-5 translate-y-4 opacity-0 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100">
-                  <p className="text-sm font-semibold tracking-[0.18em] uppercase text-white">
+                <div className="absolute bottom-4 left-4 right-4 translate-y-4 opacity-0 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100 sm:bottom-5 sm:left-5 sm:right-5">
+                  <p className="text-xs font-semibold tracking-[0.18em] uppercase text-white sm:text-sm">
                     {img.alt}
                   </p>
                 </div>

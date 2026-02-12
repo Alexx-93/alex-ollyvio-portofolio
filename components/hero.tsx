@@ -222,7 +222,7 @@ export default function Hero({ setActiveSection }: { setActiveSection: (section:
       <div className="pointer-events-none absolute -left-24 top-20 -z-10 h-[420px] w-[420px] rounded-full bg-cyan-400/10 blur-3xl" />
       <div className="pointer-events-none absolute -right-28 bottom-10 -z-10 h-[520px] w-[520px] rounded-full bg-violet-400/10 blur-3xl" />
 
-      <div className="mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full max-w-[1200px] px-4 py-4 sm:px-6 sm:py-6 lg:px-8">
         <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-12">
           {/* left */}
           <motion.div
@@ -255,7 +255,12 @@ export default function Hero({ setActiveSection }: { setActiveSection: (section:
             </p>
 
             {/* ✅ CTAs: mobile stack, sm+ sejajar */}
-            <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+            <motion.div 
+              className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center"
+              initial={reduceMotion ? undefined : { opacity: 0, y: 10 }}
+              animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+              transition={{ delay: 0.4, duration: 0.6, ease: EASE }}
+            >
               <MagneticButton
                 onClick={() => goTo("projects")}
                 className="group inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-white px-6 text-sm font-semibold text-black
@@ -267,24 +272,33 @@ export default function Hero({ setActiveSection }: { setActiveSection: (section:
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </MagneticButton>
 
-              <MagneticButton
-                onClick={() => goTo("contact")}
-                className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-full border border-white/16 bg-white/6 px-6 text-sm font-semibold text-white
-                           backdrop-blur-md transition-colors hover:bg-white/10 sm:w-auto"
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                animate={{ y: [0, -2, 0] }}
+                transition={{ duration: 2.5, repeat: Infinity, repeatDelay: 0.5 }}
               >
-                <Mail className="h-4 w-4" />
-                Contact
-              </MagneticButton>
+                <MagneticButton
+                  onClick={() => goTo("contact")}
+                  className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-full border border-white/16 bg-white/6 px-6 text-sm font-semibold text-white
+                             backdrop-blur-md transition-colors hover:bg-white/10 sm:w-auto"
+                >
+                  <Mail className="h-4 w-4" />
+                  Contact
+                </MagneticButton>
+              </motion.div>
 
-              <a
+              <motion.a
                 href="/cv.pdf"
                 className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-full border border-white/16 bg-white/0 px-6 text-sm font-semibold text-white/80
                            transition-colors hover:text-white hover:bg-white/6 sm:w-auto"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
               >
                 <Download className="h-4 w-4" />
                 Download CV
-              </a>
-            </div>
+              </motion.a>
+            </motion.div>
 
             {/* socials */}
             <div className="flex items-center gap-3 pt-1">

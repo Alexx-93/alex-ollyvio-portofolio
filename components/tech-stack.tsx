@@ -72,14 +72,14 @@ export default function TechStack() {
         <div className="absolute inset-0 opacity-[0.10] [background-image:linear-gradient(to_right,rgba(255,255,255,0.10)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.10)_1px,transparent_1px)] [background-size:70px_70px]" />
       </div>
 
-      <div className="relative mx-auto w-full max-w-[1200px]">
+      <div className="relative mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-8">
         {/* header */}
         <motion.div
           initial={reduceMotion ? undefined : { opacity: 0, y: 14 }}
           whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.35 }}
           transition={{ duration: 0.75, ease: EASE }}
-          className="mb-12"
+          className="mb-8 sm:mb-12"
         >
           <div className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/5 px-4 py-2 backdrop-blur-md">
             <span className="h-1.5 w-1.5 rounded-full bg-cyan-300 shadow-[0_0_16px_rgba(34,211,238,0.55)]" />
@@ -107,7 +107,7 @@ export default function TechStack() {
           initial={reduceMotion ? undefined : "hidden"}
           whileInView={reduceMotion ? undefined : "show"}
           viewport={{ once: true, amount: 0.25 }}
-          className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6"
+          className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-6 lg:gap-5"
         >
           {techs.map((t) => (
             <motion.div
@@ -122,9 +122,9 @@ export default function TechStack() {
                     }
               }
               whileTap={reduceMotion ? undefined : { scale: 0.98 }}
-              className="group relative overflow-hidden rounded-3xl border border-white/12 bg-white/5 p-5 backdrop-blur-xl
-                         shadow-[0_20px_70px_rgba(0,0,0,0.25)]
-                         transition-colors duration-300 hover:bg-white/8 hover:border-white/18"
+              className="group relative overflow-hidden rounded-2xl border border-white/12 bg-white/5 p-3 backdrop-blur-xl
+                         shadow-[0_15px_50px_rgba(0,0,0,0.2)] transition-colors duration-300 hover:border-white/18 hover:bg-white/8
+                         sm:rounded-3xl sm:p-5 sm:shadow-[0_20px_70px_rgba(0,0,0,0.25)]"
             >
               {/* hover outline */}
               <div className="pointer-events-none absolute inset-0 rounded-3xl ring-1 ring-white/0 transition group-hover:ring-white/12" />
@@ -142,10 +142,10 @@ export default function TechStack() {
                 />
               )}
 
-              <div className="relative flex flex-col items-center justify-center gap-3 text-center">
-                {/* icon: spring pop on hover (lebih “premium”), idle micro-float */}
+              <div className="relative flex flex-col items-center justify-center gap-2 text-center sm:gap-3">
+                {/* icon: spring pop on hover (lebih "premium"), idle micro-float */}
                 <motion.div
-                  className="text-4xl leading-none"
+                  className="text-2xl leading-none sm:text-4xl"
                   animate={reduceMotion ? undefined : { y: [0, -2, 0] }}
                   transition={
                     reduceMotion ? undefined : { duration: 3.2, repeat: Infinity, ease: "easeInOut" }
@@ -164,7 +164,7 @@ export default function TechStack() {
 
                 {/* label: slide-up + fade slightly */}
                 <motion.div
-                  className="text-xs font-semibold tracking-[0.14em] uppercase text-foreground/70 transition-colors group-hover:text-foreground"
+                  className="text-[10px] font-semibold tracking-[0.14em] uppercase text-foreground/70 transition-colors group-hover:text-foreground sm:text-xs"
                   initial={false}
                   whileHover={reduceMotion ? undefined : { y: -1, opacity: 0.95 }}
                   transition={{ duration: 0.2, ease: EASE }}

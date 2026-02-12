@@ -101,16 +101,22 @@ export default function Navbar({ activeSection, setActiveSection }: NavbarProps)
             </div>
           )}
 
-          <div className="mx-auto flex h-20 max-w-[1200px] items-center justify-between px-6">
+          <div className="mx-auto flex h-16 max-w-[1200px] items-center justify-between px-4 sm:h-20 sm:px-6">
             {/* Brand */}
-            <button onClick={() => goTo("top")} className="group text-left" aria-label="Go to top">
-              <div className="text-sm font-semibold tracking-tight text-foreground transition group-hover:opacity-90">
+            <motion.button 
+              onClick={() => goTo("top")} 
+              className="group text-left"
+              whileHover={reduceMotion ? undefined : { scale: 1.05 }}
+              whileTap={reduceMotion ? undefined : { scale: 0.98 }}
+              aria-label="Go to top"
+            >
+              <div className="text-xs font-semibold tracking-tight text-foreground transition duration-300 group-hover:text-primary sm:text-sm">
                 Alexander Ollyvio
               </div>
-              <div className="text-[11px] font-semibold tracking-[0.22em] uppercase text-foreground/60">
+              <div className="text-[9px] font-semibold tracking-[0.22em] uppercase text-foreground/60 transition duration-300 group-hover:text-foreground/80 sm:text-[11px]">
                 Portfolio
               </div>
-            </button>
+            </motion.button>
 
             {/* Desktop */}
             <div className="hidden md:flex items-center">

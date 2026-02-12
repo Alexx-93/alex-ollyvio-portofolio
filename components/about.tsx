@@ -110,7 +110,7 @@ export default function About() {
         <div className="absolute inset-0 opacity-[0.10] [background-image:linear-gradient(to_right,rgba(255,255,255,0.10)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.10)_1px,transparent_1px)] [background-size:70px_70px]" />
       </div>
 
-      <div className="relative mx-auto w-full max-w-[1200px]">
+      <div className="relative mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div
           initial={reduceMotion ? undefined : "hidden"}
@@ -118,7 +118,7 @@ export default function About() {
           viewport={{ once: true, amount: 0.35 }}
           variants={fadeUp}
           transition={{ duration: 0.75, ease: EASE }}
-          className="mb-12 flex flex-col gap-4"
+          className="mb-8 flex flex-col gap-3 sm:mb-12 sm:gap-4"
         >
           <div className="inline-flex w-fit items-center gap-2 rounded-full border border-white/12 bg-white/5 px-4 py-2 backdrop-blur-md">
             <span className="h-1.5 w-1.5 rounded-full bg-cyan-300 shadow-[0_0_16px_rgba(34,211,238,0.55)]" />
@@ -145,7 +145,7 @@ export default function About() {
           </p>
         </motion.div>
 
-        <div className="grid items-start gap-10 lg:grid-cols-2 lg:gap-14">
+        <div className="grid items-start gap-6 sm:gap-8 lg:grid-cols-2 lg:gap-12">
           {/* LEFT — Photo card (tilt + glare + shimmer) */}
           <motion.div
             initial={reduceMotion ? undefined : { opacity: 0, y: 18 }}
@@ -242,11 +242,11 @@ export default function About() {
               hidden: { opacity: 0, y: 16 },
               show: { opacity: 1, y: 0, transition: { staggerChildren: 0.10 } },
             }}
-            className="space-y-4"
+            className="space-y-3 sm:space-y-4"
           >
             {[
               <>
-                Hi! I’m{" "}
+                Hi! I'm{" "}
                 <span className="font-semibold text-foreground">Alexander Ollyvio Kristo Sentono</span>. I care about
                 building useful products that people can actually use—by keeping things{" "}
                 <span className="font-semibold text-foreground">simple</span>,{" "}
@@ -254,12 +254,12 @@ export default function About() {
                 <span className="font-semibold text-foreground">reliable</span>.
               </>,
               <>
-                I’m passionate about <span className="font-semibold text-foreground">web development</span> and{" "}
+                I'm passionate about <span className="font-semibold text-foreground">web development</span> and{" "}
                 <span className="font-semibold text-foreground">cybersecurity</span>. I enjoy collaborating, learning
                 fast, and turning real-world requirements into a scalable solution.
               </>,
               <>
-                Outside tech, I’m an avid mountain climber—finding perspective at high altitudes. Peaks like{" "}
+                Outside tech, I'm an avid mountain climber—finding perspective at high altitudes. Peaks like{" "}
                 <span className="font-semibold text-foreground">Mt. Lawu</span> and{" "}
                 <span className="font-semibold text-foreground">Mt. Merbabu</span> remind me to stay disciplined and
                 consistent.
@@ -268,12 +268,13 @@ export default function About() {
               <motion.div
                 key={i}
                 variants={fadeUp}
-                transition={{ duration: 0.75, ease: EASE }}
-                whileHover={reduceMotion ? undefined : { y: -2 }}
-                className="rounded-3xl border border-white/12 bg-white/5 p-6 backdrop-blur-xl
-                           hover:bg-white/8 hover:border-white/16 transition-colors"
+                transition={{ duration: 0.75, ease: EASE, delay: i * 0.1 }}
+                whileHover={reduceMotion ? undefined : { y: -4, scale: 1.02 }}
+                whileInView={reduceMotion ? undefined : "show"}
+                className="rounded-2xl border border-white/12 bg-white/5 p-4 backdrop-blur-xl
+                           transition-all hover:border-white/16 hover:bg-white/8 sm:rounded-3xl sm:p-6"
               >
-                <p className="text-base leading-relaxed text-foreground/75 md:text-lg">{text}</p>
+                <p className="text-sm leading-relaxed text-foreground/75 sm:text-base md:text-lg">{text}</p>
               </motion.div>
             ))}
 
@@ -312,14 +313,14 @@ export default function About() {
             <motion.div
               variants={fadeUp}
               transition={{ duration: 0.75, ease: EASE }}
-              className="rounded-3xl border border-white/12 bg-white/5 p-5 backdrop-blur-xl"
+              className="rounded-2xl border border-white/12 bg-white/5 p-4 backdrop-blur-xl sm:rounded-3xl sm:p-5"
             >
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <div className="text-sm font-semibold text-foreground/80">Want to see what I’ve built?</div>
+              <div className="flex flex-col items-center justify-between gap-3 sm:flex-row">
+                <div className="text-center text-sm font-semibold text-foreground/80 sm:text-left">Want to see what I've built?</div>
                 <button
                   onClick={() => document.getElementById("projects")?.scrollIntoView({ behavior: "smooth" })}
-                  className="rounded-full border border-white/12 bg-white/5 px-4 py-2 text-sm font-semibold text-foreground/80
-                             hover:bg-white/10 hover:text-foreground transition-colors"
+                  className="w-full rounded-full border border-white/12 bg-white/5 px-4 py-2 text-sm font-semibold text-foreground/80
+                             transition-colors hover:bg-white/10 hover:text-foreground sm:w-auto"
                 >
                   Explore Projects →
                 </button>
