@@ -40,8 +40,6 @@ export default function Home() {
       <Navbar
         activeSection={activeSection}
         setActiveSection={setActiveSection}
-        isDarkMode={isDarkMode}
-        toggleDarkMode={toggleDarkMode}
       />
       <Hero setActiveSection={setActiveSection} />
       <About />

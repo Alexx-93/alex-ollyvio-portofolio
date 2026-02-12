@@ -3,12 +3,15 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Menu, X } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import Image from "next/image";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
 type NavbarProps = {
   activeSection: string;
   setActiveSection: (section: string) => void;
+  isDarkMode?: boolean;
+  toggleDarkMode?: () => void;
 };
 
 export default function Navbar({ activeSection, setActiveSection }: NavbarProps) {
@@ -102,19 +105,22 @@ export default function Navbar({ activeSection, setActiveSection }: NavbarProps)
           )}
 
           <div className="mx-auto flex h-16 max-w-[1200px] items-center justify-between px-4 sm:h-20 sm:px-6">
-            {/* Brand */}
+            {/* Brand Logo */}
             <motion.button 
               onClick={() => goTo("top")} 
-              className="group text-left"
-              whileHover={reduceMotion ? undefined : { scale: 1.05 }}
-              whileTap={reduceMotion ? undefined : { scale: 0.98 }}
+              className="group relative"
+              whileHover={reduceMotion ? undefined : { scale: 1.08 }}
+              whileTap={reduceMotion ? undefined : { scale: 0.95 }}
               aria-label="Go to top"
             >
-              <div className="text-xs font-semibold tracking-tight text-foreground transition duration-300 group-hover:text-primary sm:text-sm">
-                Alexander Ollyvio
-              </div>
-              <div className="text-[9px] font-semibold tracking-[0.22em] uppercase text-foreground/60 transition duration-300 group-hover:text-foreground/80 sm:text-[11px]">
-                Portfolio
+              <div className="relative h-10 w-10 sm:h-12 sm:w-12">
+                <Image
+                  src="/logo-ax.png"
+                  alt="AX Logo"
+                  fill
+                  className="object-contain drop-shadow-[0_0_8px_rgba(34,211,238,0.4)] transition-all duration-300 group-hover:drop-shadow-[0_0_16px_rgba(34,211,238,0.8)]"
+                  priority
+                />
               </div>
             </motion.button>
 
