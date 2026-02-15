@@ -36,7 +36,7 @@ export default function Home() {
   }
 
   return (
-    <div className="scroll-smooth bg-background">
+    <div className="scroll-smooth bg-background w-full overflow-x-hidden">
       <Navbar
         activeSection={activeSection}
         setActiveSection={setActiveSection}
