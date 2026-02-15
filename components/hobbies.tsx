@@ -63,7 +63,7 @@ export default function Hobbies() {
     setActiveIndex((i) => (i === null ? null : (i + 1) % images.length));
 
   return (
-    <section id="hobbies" className="relative overflow-hidden px-6 py-28">
+    <section id="hobbies" className="relative overflow-hidden px-4 py-16 sm:px-6 sm:py-20 md:py-28">
       {/* ✅ Background disesuaikan: lebih “netral” + sama vibe section lain (cyan/violet di pinggir, NO glow di tengah) */}
       <div className="pointer-events-none absolute inset-0 -z-10">
         <div className="absolute inset-0 bg-[radial-gradient(1200px_700px_at_50%_0%,rgba(255,255,255,0.06),transparent_60%)]" />

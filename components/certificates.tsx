@@ -204,7 +204,7 @@ export default function Certificates() {
   };
 
   return (
-    <section id="certificates" className="relative overflow-hidden px-6 py-24">
+    <section id="certificates" className="relative overflow-hidden px-4 py-16 sm:px-6 sm:py-20 md:py-24">
       {/* ambient bg */}
       <div className="pointer-events-none absolute inset-0 -z-10">
         <div className="absolute -top-24 -left-16 h-80 w-80 rounded-full bg-cyan-400/10 blur-3xl" />

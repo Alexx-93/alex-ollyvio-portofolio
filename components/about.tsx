@@ -101,7 +101,7 @@ export default function About() {
   const [statsVisible, setStatsVisible] = useState(false);
 
   return (
-    <section id="about" className="relative overflow-hidden px-6 py-24">
+    <section id="about" className="relative overflow-hidden px-4 py-16 sm:px-6 sm:py-20 md:py-24">
       {/* soft ambient (match Hero/Navbar vibe) */}
       <div className="pointer-events-none absolute inset-0 -z-10">
         <div className="absolute -top-28 -left-20 h-80 w-80 rounded-full bg-cyan-400/10 blur-3xl" />

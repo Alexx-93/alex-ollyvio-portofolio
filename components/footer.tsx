@@ -62,7 +62,7 @@ export default function Footer() {
   };
 
   return (
-    <footer className="relative overflow-hidden border-t border-white/10 px-6 py-16">
+    <footer className="relative overflow-hidden border-t border-white/10 px-4 py-12 sm:px-6 sm:py-14 md:py-16">
       {/* ambient bg (lebih konsisten + lebih “clean”) */}
       <div className="pointer-events-none absolute inset-0 -z-10">
         <div className="absolute inset-0 bg-[radial-gradient(1100px_650px_at_50%_0%,rgba(255,255,255,0.06),transparent_60%)]" />
