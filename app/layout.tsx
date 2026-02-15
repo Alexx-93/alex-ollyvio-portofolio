@@ -17,13 +17,18 @@ export const metadata: Metadata = {
   },
 };
 
-// penting untuk mobile
-export const viewport: Viewport = { width: "device-width", initialScale: 1 };
+// penting untuk mobile - prevent zoom
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+};
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="id" className="dark" suppressHydrationWarning>
-      <body className="font-sans antialiased overflow-x-hidden">
+    <html lang="id" className="dark overflow-x-hidden" suppressHydrationWarning>
+      <body className="font-sans antialiased overflow-x-hidden w-full">
         {children}
         <Analytics />
       </body>

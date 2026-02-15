@@ -208,7 +208,7 @@ export default function Hero({ setActiveSection }: { setActiveSection: (section:
   };
 
   return (
-    <section className="relative min-h-[92vh] py-20 md:py-24 lg:py-28">
+    <section className="relative min-h-screen sm:min-h-[92vh] py-16 sm:py-20 md:py-24 lg:py-28">
       {/* background */}
       <div className="absolute inset-0 -z-20 bg-gradient-to-br from-[#070a12] via-[#0b1220] to-[#060812]" />
       <div className="pointer-events-none absolute inset-0 -z-10" style={overlayStyle} />
@@ -223,7 +223,7 @@ export default function Hero({ setActiveSection }: { setActiveSection: (section:
       <div className="pointer-events-none absolute -right-28 bottom-10 -z-10 h-[520px] w-[520px] rounded-full bg-violet-400/10 blur-3xl" />
 
       <div className="mx-auto w-full max-w-[1200px] px-4 py-4 sm:px-6 sm:py-6 lg:px-8">
-        <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-12">
+        <div className="grid items-center gap-6 sm:gap-8 lg:grid-cols-2 lg:gap-12">
           {/* left */}
           <motion.div
             initial={reduceMotion ? undefined : { opacity: 0, y: 18 }}
@@ -388,9 +388,6 @@ export default function Hero({ setActiveSection }: { setActiveSection: (section:
               <div className="absolute bottom-5 left-5 right-5 flex items-center justify-between">
                 <div className="rounded-full border border-white/14 bg-black/30 px-4 py-2 text-[11px] font-semibold tracking-[0.22em] uppercase text-white/70 backdrop-blur-md">
                   Merbabu Peak • 2025
-                </div>
-                <div className="rounded-full border border-white/14 bg-black/30 px-3 py-2 text-[11px] font-semibold text-white/70 backdrop-blur-md">
-                  ✦
                 </div>
               </div>
             </motion.div>
