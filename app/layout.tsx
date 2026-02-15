@@ -17,8 +17,13 @@ export const metadata: Metadata = {
   },
 };
 
-// penting untuk mobile
-export const viewport: Viewport = { width: "device-width", initialScale: 1 };
+// penting untuk mobile - prevent zoom
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+};
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
