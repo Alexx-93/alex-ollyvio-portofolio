@@ -232,7 +232,6 @@ export default function Hero({ setActiveSection }: { setActiveSection: (section:
       <div className="pointer-events-none absolute -right-28 bottom-10 -z-10 h-[520px] w-[520px] rounded-full bg-violet-400/10 blur-3xl" />
 
       <div className="mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-8">
-        {/* Mobile: 1 kolom & super rapat biar muat 1 layar */}
         <div className="grid items-start gap-6 sm:gap-10 lg:grid-cols-2 lg:items-center lg:gap-12">
           {/* left */}
           <motion.div
@@ -250,7 +249,6 @@ export default function Hero({ setActiveSection }: { setActiveSection: (section:
               </div>
             </div>
 
-            {/* Title diperkecil di HP supaya muat */}
             <h1 className="text-balance font-semibold tracking-tight text-white leading-[0.98] text-[clamp(34px,9.2vw,72px)]">
               Alexander{" "}
               <PremiumName
@@ -259,12 +257,11 @@ export default function Hero({ setActiveSection }: { setActiveSection: (section:
               />
             </h1>
 
-            {/* Bio dibuat sedikit lebih pendek di HP */}
             <p className="max-w-[56ch] text-[13px] leading-relaxed text-white/70 sm:text-lg">
-              Informatics student at Universitas Atma Jaya Yogyakarta. Focused on frontend & UI/UX with an interest in cybersecurity.
+              Informatics student at Universitas Atma Jaya Yogyakarta. Focused on frontend & UI/UX with an interest in
+              cybersecurity.
             </p>
 
-            {/* CTA: tetap full width di HP */}
             <div className="flex flex-col gap-2.5 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
               <MagneticButton
                 onClick={() => goTo("projects")}
@@ -307,7 +304,6 @@ export default function Hero({ setActiveSection }: { setActiveSection: (section:
               </a>
             </div>
 
-            {/* socials */}
             <div className="flex items-center gap-3 pt-1">
               {[
                 { href: "https://github.com/", label: "GitHub", icon: Github },
@@ -337,7 +333,6 @@ export default function Hero({ setActiveSection }: { setActiveSection: (section:
               ))}
             </div>
 
-            {/* ✅ Stats dibuat COMPACT 3 kolom (biar muat 1 layar HP) */}
             <div className="grid max-w-xl grid-cols-3 gap-2 sm:gap-3">
               {[
                 { label: "Projects", value: 7 },
@@ -359,20 +354,24 @@ export default function Hero({ setActiveSection }: { setActiveSection: (section:
             </div>
           </motion.div>
 
-          {/* ✅ Image: HIDDEN di HP biar hero beneran “fit 1 screen”.
-              Muncul mulai sm (tablet) ke atas. */}
+          {/* ✅ right image (NO CROP, smaller) */}
           <motion.div
-            initial={reduceMotion ? undefined : { opacity: 0, y: 14, scale: 0.98 }}
+            initial={reduceMotion ? undefined : { opacity: 0, y: 16, scale: 0.98 }}
             animate={reduceMotion ? undefined : { opacity: 1, y: 0, scale: 1 }}
-            transition={{ duration: 0.75, ease: EASE }}
+            transition={{ duration: 0.85, ease: EASE }}
             className="relative hidden justify-center sm:flex md:justify-end"
           >
             <motion.div
               ref={tilt.ref}
-              style={reduceMotion ? undefined : { rotateX: tilt.rotateX, rotateY: tilt.rotateY, transformStyle: "preserve-3d" }}
+              style={
+                reduceMotion
+                  ? undefined
+                  : { rotateX: tilt.rotateX, rotateY: tilt.rotateY, transformStyle: "preserve-3d" }
+              }
               className="
-                relative w-full max-w-[420px]
-                aspect-[3/4]
+                relative w-full
+                max-w-[360px] md:max-w-[420px] lg:max-w-[440px]
+                aspect-[4/3] lg:aspect-[3/4]
                 overflow-hidden rounded-3xl
                 border border-white/12 bg-white/5 backdrop-blur-xl shadow-2xl
               "
@@ -381,15 +380,20 @@ export default function Hero({ setActiveSection }: { setActiveSection: (section:
               <div className="pointer-events-none absolute -inset-10 bg-violet-400/10 blur-3xl" />
 
               <div className="absolute inset-0" style={{ transform: "translateZ(18px)" }}>
+                {/* premium stage background so empty space looks good */}
+                <div className="absolute inset-0 bg-gradient-to-b from-white/6 via-white/3 to-transparent" />
+                <div className="absolute inset-0 bg-[radial-gradient(900px_400px_at_50%_20%,rgba(34,211,238,0.10),transparent_60%)]" />
+
                 <Image
                   src="/images/img-2273.jpeg"
                   alt="Merbabu Peak"
                   fill
-                  className="object-cover object-center"
-                  sizes="(max-width: 1024px) 420px, 420px"
+                  className="object-contain object-center p-4 sm:p-5"
+                  sizes="(max-width: 768px) 86vw, (max-width: 1024px) 420px, 440px"
                   priority
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-black/10 to-transparent" />
+
+                <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent" />
               </div>
 
               <div className="pointer-events-none absolute inset-0 opacity-70">
@@ -397,7 +401,7 @@ export default function Hero({ setActiveSection }: { setActiveSection: (section:
                 <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-white/16 to-transparent" />
               </div>
 
-              <div className="absolute bottom-5 left-5 right-5 flex items-center justify-between">
+              <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
                 <div className="rounded-full border border-white/14 bg-black/30 px-4 py-2 text-[11px] font-semibold tracking-[0.22em] uppercase text-white/70 backdrop-blur-md">
                   Merbabu Peak • 2025
                 </div>
