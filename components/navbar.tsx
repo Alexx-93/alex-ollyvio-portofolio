@@ -373,9 +373,6 @@ export default function Navbar({ activeSection, setActiveSection }: NavbarProps)
                   animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
                   transition={{ delay: 0.25, duration: 0.35, ease: EASE }}
                 >
-                  Tip: Press{" "}
-                  <span className="rounded-md border border-white/10 bg-white/5 px-2 py-1">Ctrl</span> +{" "}
-                  <span className="rounded-md border border-white/10 bg-white/5 px-2 py-1">K</span>
                 </motion.div>
               </div>
             </motion.div>
