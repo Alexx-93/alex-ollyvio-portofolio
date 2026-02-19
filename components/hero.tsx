@@ -139,7 +139,12 @@ function MagneticButton({
   }, [mx, my, reduceMotion]);
 
   return (
-    <motion.button ref={ref} onClick={onClick} style={reduceMotion ? undefined : { x: mx, y: my }} className={className}>
+    <motion.button
+      ref={ref}
+      onClick={onClick}
+      style={reduceMotion ? undefined : { x: mx, y: my }}
+      className={className}
+    >
       {children}
     </motion.button>
   );
@@ -151,17 +156,17 @@ function PremiumName({ text, className = "" }: { text: string; className?: strin
 
   const container = {
     hidden: {},
-    show: { transition: { staggerChildren: 0.06, delayChildren: 0.4 } },
+    show: { transition: { staggerChildren: 0.05, delayChildren: 0.25 } },
   };
 
   const item = {
-    hidden: { y: 32, opacity: 0, filter: "blur(6px)", rotateX: 80 },
+    hidden: { y: 22, opacity: 0, filter: "blur(6px)", rotateX: 70 },
     show: {
       y: 0,
       opacity: 1,
       filter: "blur(0px)",
       rotateX: 0,
-      transition: { type: "spring", stiffness: 140, damping: 18 },
+      transition: { type: "spring", stiffness: 150, damping: 18 },
     },
   };
 
@@ -207,10 +212,10 @@ export default function Hero({ setActiveSection }: { setActiveSection: (section:
       className="
         relative overflow-hidden
         min-h-[100svh]
-        pt-[calc(env(safe-area-inset-top)+88px)]
-        pb-14
-        sm:pt-[calc(env(safe-area-inset-top)+100px)]
-        sm:pb-16
+        pt-[calc(env(safe-area-inset-top)+76px)]
+        pb-10
+        sm:pt-[calc(env(safe-area-inset-top)+92px)]
+        sm:pb-14
       "
     >
       {/* background */}
@@ -227,25 +232,26 @@ export default function Hero({ setActiveSection }: { setActiveSection: (section:
       <div className="pointer-events-none absolute -right-28 bottom-10 -z-10 h-[520px] w-[520px] rounded-full bg-violet-400/10 blur-3xl" />
 
       <div className="mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-8">
-        {/* IMPORTANT: mobile 1 kolom (text dulu), md+ baru 2 kolom */}
-        <div className="grid items-start gap-10 md:items-center md:gap-12 lg:grid-cols-2">
+        {/* Mobile: 1 kolom & super rapat biar muat 1 layar */}
+        <div className="grid items-start gap-6 sm:gap-10 lg:grid-cols-2 lg:items-center lg:gap-12">
           {/* left */}
           <motion.div
-            initial={reduceMotion ? undefined : { opacity: 0, y: 16 }}
+            initial={reduceMotion ? undefined : { opacity: 0, y: 14 }}
             animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
-            transition={{ duration: 0.85, ease: EASE }}
-            className="space-y-7"
+            transition={{ duration: 0.75, ease: EASE }}
+            className="space-y-4 sm:space-y-7"
           >
             <div className="flex flex-wrap items-center gap-3">
-              <div className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/5 px-4 py-2 backdrop-blur-md">
+              <div className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/5 px-3 py-1.5 backdrop-blur-md sm:px-4 sm:py-2">
                 <span className="h-1.5 w-1.5 rounded-full bg-cyan-300 shadow-[0_0_16px_rgba(34,211,238,0.6)]" />
-                <span className="text-[11px] font-semibold tracking-[0.22em] uppercase text-white/70">
+                <span className="text-[10px] font-semibold tracking-[0.22em] uppercase text-white/70 sm:text-[11px]">
                   College Students
                 </span>
               </div>
             </div>
 
-            <h1 className="text-balance font-semibold tracking-tight text-white leading-[0.98] text-[clamp(40px,8.6vw,72px)]">
+            {/* Title diperkecil di HP supaya muat */}
+            <h1 className="text-balance font-semibold tracking-tight text-white leading-[0.98] text-[clamp(34px,9.2vw,72px)]">
               Alexander{" "}
               <PremiumName
                 text="Ollyvio"
@@ -253,21 +259,21 @@ export default function Hero({ setActiveSection }: { setActiveSection: (section:
               />
             </h1>
 
-            <p className="max-w-[56ch] text-base leading-relaxed text-white/70 sm:text-lg">
-              Computer science student at Universitas Atma Jaya Yogyakarta focused on web development and cybersecurity,
-              specializing in frontend and UI/UX. Committed to building modern, secure, and user-centered digital systems.
+            {/* Bio dibuat sedikit lebih pendek di HP */}
+            <p className="max-w-[56ch] text-[13px] leading-relaxed text-white/70 sm:text-lg">
+              Informatics student at Universitas Atma Jaya Yogyakarta. Focused on frontend & UI/UX with an interest in cybersecurity.
             </p>
 
-            {/* CTA - mobile full width */}
-            <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+            {/* CTA: tetap full width di HP */}
+            <div className="flex flex-col gap-2.5 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
               <MagneticButton
                 onClick={() => goTo("projects")}
                 className="
-                  group inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-white px-6
+                  group inline-flex h-11 w-full items-center justify-center gap-2 rounded-full bg-white px-5
                   text-sm font-semibold text-black
                   shadow-[0_16px_60px_rgba(255,255,255,0.08)]
                   transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_22px_80px_rgba(34,211,238,0.18)]
-                  sm:w-auto
+                  sm:h-12 sm:w-auto sm:px-6
                 "
               >
                 Explore Projects
@@ -277,10 +283,10 @@ export default function Hero({ setActiveSection }: { setActiveSection: (section:
               <MagneticButton
                 onClick={() => goTo("contact")}
                 className="
-                  inline-flex h-12 w-full items-center justify-center gap-2 rounded-full
-                  border border-white/16 bg-white/6 px-6 text-sm font-semibold text-white
+                  inline-flex h-11 w-full items-center justify-center gap-2 rounded-full
+                  border border-white/16 bg-white/6 px-5 text-sm font-semibold text-white
                   backdrop-blur-md transition-colors hover:bg-white/10
-                  sm:w-auto
+                  sm:h-12 sm:w-auto sm:px-6
                 "
               >
                 <Mail className="h-4 w-4" />
@@ -290,10 +296,10 @@ export default function Hero({ setActiveSection }: { setActiveSection: (section:
               <a
                 href="/cv.pdf"
                 className="
-                  inline-flex h-12 w-full items-center justify-center gap-2 rounded-full
-                  border border-white/16 bg-white/0 px-6 text-sm font-semibold text-white/80
+                  inline-flex h-11 w-full items-center justify-center gap-2 rounded-full
+                  border border-white/16 bg-white/0 px-5 text-sm font-semibold text-white/80
                   transition-colors hover:text-white hover:bg-white/6
-                  sm:w-auto
+                  sm:h-12 sm:w-auto sm:px-6
                 "
               >
                 <Download className="h-4 w-4" />
@@ -314,9 +320,10 @@ export default function Hero({ setActiveSection }: { setActiveSection: (section:
                   rel="noopener noreferrer"
                   aria-label={s.label}
                   className="
-                    group relative inline-flex h-11 w-11 items-center justify-center rounded-full
+                    group relative inline-flex h-10 w-10 items-center justify-center rounded-full
                     border border-white/12 bg-white/5 backdrop-blur-md
                     hover:bg-white/10 transition-colors
+                    sm:h-11 sm:w-11
                   "
                 >
                   <span
@@ -330,21 +337,21 @@ export default function Hero({ setActiveSection }: { setActiveSection: (section:
               ))}
             </div>
 
-            {/* stats - mobile 1 kolom, sm 3 kolom */}
-            <div className="grid max-w-xl grid-cols-1 gap-3 sm:grid-cols-3">
+            {/* ✅ Stats dibuat COMPACT 3 kolom (biar muat 1 layar HP) */}
+            <div className="grid max-w-xl grid-cols-3 gap-2 sm:gap-3">
               {[
                 { label: "Projects", value: 7 },
                 { label: "Stacks", value: 6 },
-                { label: "Experiences", value: 2 },
+                { label: "Exp", value: 2 },
               ].map((s) => (
                 <div
                   key={s.label}
-                  className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-md hover:bg-white/8 transition-colors"
+                  className="rounded-2xl border border-white/10 bg-white/5 px-3 py-3 backdrop-blur-md hover:bg-white/8 transition-colors sm:p-4"
                 >
-                  <div className="text-2xl font-semibold text-white">
+                  <div className="text-xl font-semibold text-white sm:text-2xl">
                     <AnimatedCounter end={s.value} />+
                   </div>
-                  <div className="mt-1 text-xs font-semibold tracking-[0.18em] uppercase text-white/55">
+                  <div className="mt-1 text-[10px] font-semibold tracking-[0.18em] uppercase text-white/55 sm:text-xs">
                     {s.label}
                   </div>
                 </div>
@@ -352,19 +359,20 @@ export default function Hero({ setActiveSection }: { setActiveSection: (section:
             </div>
           </motion.div>
 
-          {/* right image */}
+          {/* ✅ Image: HIDDEN di HP biar hero beneran “fit 1 screen”.
+              Muncul mulai sm (tablet) ke atas. */}
           <motion.div
-            initial={reduceMotion ? undefined : { opacity: 0, y: 16, scale: 0.98 }}
+            initial={reduceMotion ? undefined : { opacity: 0, y: 14, scale: 0.98 }}
             animate={reduceMotion ? undefined : { opacity: 1, y: 0, scale: 1 }}
-            transition={{ duration: 0.85, ease: EASE }}
-            className="relative flex justify-center md:justify-end"
+            transition={{ duration: 0.75, ease: EASE }}
+            className="relative hidden justify-center sm:flex md:justify-end"
           >
             <motion.div
               ref={tilt.ref}
               style={reduceMotion ? undefined : { rotateX: tilt.rotateX, rotateY: tilt.rotateY, transformStyle: "preserve-3d" }}
               className="
                 relative w-full max-w-[420px]
-                aspect-[4/3] sm:aspect-[3/4]
+                aspect-[3/4]
                 overflow-hidden rounded-3xl
                 border border-white/12 bg-white/5 backdrop-blur-xl shadow-2xl
               "
@@ -378,7 +386,7 @@ export default function Hero({ setActiveSection }: { setActiveSection: (section:
                   alt="Merbabu Peak"
                   fill
                   className="object-cover object-center"
-                  sizes="(max-width: 768px) 92vw, 420px"
+                  sizes="(max-width: 1024px) 420px, 420px"
                   priority
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-black/10 to-transparent" />
