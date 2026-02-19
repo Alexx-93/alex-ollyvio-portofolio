@@ -19,7 +19,6 @@ const images = [
 
 export default function Hobbies() {
   const reduceMotion = useReducedMotion();
-
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
   const active = useMemo(
@@ -32,12 +31,14 @@ export default function Hobbies() {
       if (activeIndex === null) return;
 
       if (e.key === "Escape") setActiveIndex(null);
-      if (e.key === "ArrowLeft")
+      if (e.key === "ArrowLeft") {
         setActiveIndex((i) =>
           i === null ? null : (i - 1 + images.length) % images.length
         );
-      if (e.key === "ArrowRight")
+      }
+      if (e.key === "ArrowRight") {
         setActiveIndex((i) => (i === null ? null : (i + 1) % images.length));
+      }
     };
 
     window.addEventListener("keydown", onKey);
@@ -55,6 +56,7 @@ export default function Hobbies() {
 
   const open = (i: number) => setActiveIndex(i);
   const close = () => setActiveIndex(null);
+
   const prev = () =>
     setActiveIndex((i) =>
       i === null ? null : (i - 1 + images.length) % images.length
@@ -63,10 +65,14 @@ export default function Hobbies() {
     setActiveIndex((i) => (i === null ? null : (i + 1) % images.length));
 
   return (
-    <section id="hobbies" className="relative overflow-hidden px-4 py-16 sm:px-6 sm:py-20 md:py-28">
-      {/* ✅ Background disesuaikan: lebih “netral” + sama vibe section lain (cyan/violet di pinggir, NO glow di tengah) */}
+    <section
+      id="hobbies"
+      className="relative overflow-hidden px-4 py-16 sm:px-6 sm:py-20 md:py-28"
+    >
+      {/* Background (selaras hero): cyan/violet di pinggir + grid halus */}
       <div className="pointer-events-none absolute inset-0 -z-10">
         <div className="absolute inset-0 bg-[radial-gradient(1200px_700px_at_50%_0%,rgba(255,255,255,0.06),transparent_60%)]" />
+
         <motion.div
           className="absolute -top-24 -left-24 h-[420px] w-[420px] rounded-full bg-cyan-400/8 blur-3xl"
           animate={
@@ -93,10 +99,11 @@ export default function Hobbies() {
               : { duration: 11, repeat: Infinity, ease: "easeInOut" }
           }
         />
+
         <div className="absolute inset-0 opacity-[0.10] [background-image:linear-gradient(to_right,rgba(255,255,255,0.10)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.10)_1px,transparent_1px)] [background-size:70px_70px]" />
       </div>
 
-      <div className="relative mx-auto w-full max-w-[1300px] px-4 sm:px-6 lg:px-8">
+      <div className="relative mx-auto w-full max-w-[1300px] px-0 sm:px-2 lg:px-4">
         {/* Header */}
         <motion.div
           initial={reduceMotion ? undefined : { opacity: 0, y: 18 }}
@@ -108,7 +115,7 @@ export default function Hobbies() {
           <div className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/5 px-4 py-2 backdrop-blur-md">
             <motion.span
               className="h-1.5 w-1.5 rounded-full bg-cyan-300 shadow-[0_0_16px_rgba(34,211,238,0.6)]"
-              animate={reduceMotion ? undefined : { scale: [1, 1.5, 1] }}
+              animate={reduceMotion ? undefined : { scale: [1, 1.45, 1] }}
               transition={
                 reduceMotion
                   ? undefined
@@ -138,14 +145,19 @@ export default function Hobbies() {
           {images.map((img, i) => (
             <motion.div
               key={img.src}
-              initial={reduceMotion ? undefined : { opacity: 0, y: 30 }}
+              initial={reduceMotion ? undefined : { opacity: 0, y: 26 }}
               whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.2 }}
-              transition={{ duration: 0.7, delay: i * 0.06, ease: EASE }}
+              transition={{ duration: 0.65, delay: i * 0.05, ease: EASE }}
               whileHover={reduceMotion ? undefined : { y: -6 }}
-              className="group relative break-inside-avoid overflow-hidden rounded-2xl border border-white/12 bg-white/5 backdrop-blur-xl
-                         shadow-[0_15px_50px_rgba(0,0,0,0.2)] transition-all duration-500 hover:border-white/18 hover:bg-white/8 hover:shadow-[0_25px_80px_rgba(0,0,0,0.35)]
-                         sm:rounded-3xl sm:shadow-[0_25px_90px_rgba(0,0,0,0.35)]"
+              className="
+                group relative break-inside-avoid overflow-hidden
+                rounded-2xl sm:rounded-3xl
+                border border-white/12 bg-white/5 backdrop-blur-xl
+                shadow-[0_18px_60px_rgba(0,0,0,0.22)]
+                transition-all duration-500
+                hover:border-white/18 hover:bg-white/8 hover:shadow-[0_30px_90px_rgba(0,0,0,0.35)]
+              "
             >
               <div className="relative">
                 <Image
@@ -153,23 +165,27 @@ export default function Hobbies() {
                   alt={img.alt}
                   width={1200}
                   height={1600}
-                  className="w-full h-auto object-cover transition-transform duration-700 ease-out group-hover:scale-[1.06]"
+                  className="h-auto w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.06]"
                 />
 
-                {/* Gradient overlay */}
+                {/* Gradient overlay (biar teks kebaca) */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent opacity-80" />
 
-                {/* shimmer sweep */}
+                {/* ✅ Glass sweep MENYAMPING (horizontal), bukan diagonal */}
                 {!reduceMotion && (
                   <motion.div
                     aria-hidden
-                    className="pointer-events-none absolute -left-1/3 top-0 h-full w-1/3 rotate-12 bg-gradient-to-r from-transparent via-white/12 to-transparent opacity-0 group-hover:opacity-100"
-                    animate={{ x: ["-35%", "340%"] }}
+                    className="
+                      pointer-events-none absolute inset-y-0 -left-1/2 w-1/2
+                      bg-gradient-to-r from-transparent via-white/14 to-transparent
+                      opacity-0 group-hover:opacity-100
+                    "
+                    animate={{ x: ["-30%", "260%"] }}
                     transition={{
-                      duration: 1.35,
+                      duration: 1.1,
                       ease: "easeInOut",
                       repeat: Infinity,
-                      repeatDelay: 1.4,
+                      repeatDelay: 1.6,
                     }}
                   />
                 )}
@@ -188,10 +204,7 @@ export default function Hobbies() {
                 />
               </div>
 
-              {/* ❌ HAPUS “cahaya biru di tengah”
-                  Ini sumbernya: radial cyan glow overlay.
-                  Jadi kita hilangkan sepenuhnya, atau ganti highlight tipis di border.
-              */}
+              {/* border highlight halus saat hover */}
               <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
                 <div className="absolute inset-0 rounded-3xl ring-1 ring-white/10" />
               </div>
@@ -204,7 +217,7 @@ export default function Hobbies() {
       <AnimatePresence>
         {active && (
           <motion.div
-            className="fixed inset-0 z-[300] flex items-center justify-center p-6"
+            className="fixed inset-0 z-[300] flex items-center justify-center p-4 sm:p-6"
             initial={reduceMotion ? undefined : { opacity: 0 }}
             animate={reduceMotion ? undefined : { opacity: 1 }}
             exit={reduceMotion ? undefined : { opacity: 0 }}
@@ -212,6 +225,7 @@ export default function Hobbies() {
             <button
               className="absolute inset-0 bg-black/90 backdrop-blur-md"
               onClick={close}
+              aria-label="Close"
             />
 
             <motion.div
@@ -227,8 +241,11 @@ export default function Hobbies() {
               animate={reduceMotion ? undefined : { scale: 1, opacity: 1, y: 0 }}
               exit={reduceMotion ? undefined : { scale: 0.96, opacity: 0, y: 10 }}
               transition={{ duration: 0.35, ease: EASE }}
-              className="relative w-full max-w-6xl overflow-hidden rounded-3xl border border-white/12 bg-white/5 backdrop-blur-xl
-                         shadow-[0_50px_160px_rgba(0,0,0,0.75)]"
+              className="
+                relative w-full max-w-6xl overflow-hidden rounded-3xl
+                border border-white/12 bg-white/5 backdrop-blur-xl
+                shadow-[0_50px_160px_rgba(0,0,0,0.75)]
+              "
               role="dialog"
               aria-modal="true"
             >
