@@ -92,10 +92,9 @@ export default function Navbar({ activeSection, setActiveSection }: NavbarProps)
                 }
             }
             transition={{ duration: 0.35, ease: EASE }}
-            className={[
-              "relative border-b backdrop-blur-md",
-              isScrolled ? "backdrop-blur-xl" : "backdrop-blur-md",
-            ].join(" ")}
+            className={["relative border-b backdrop-blur-md", isScrolled ? "backdrop-blur-xl" : "backdrop-blur-md"].join(
+              " "
+            )}
             style={reduceMotion ? undefined : { willChange: "background-color, border-color" }}
           >
             {/* soft haze under navbar */}
@@ -140,7 +139,6 @@ export default function Navbar({ activeSection, setActiveSection }: NavbarProps)
                   <span className="text-white/90 group-hover:text-white transition-colors">Alexander</span>{" "}
                   <span className="relative bg-gradient-to-r from-cyan-300 via-sky-300 to-violet-300 bg-clip-text text-transparent">
                     Ollyvio
-                    {/* animated underline shimmer */}
                     {!reduceMotion && (
                       <motion.span
                         aria-hidden
@@ -158,8 +156,7 @@ export default function Navbar({ activeSection, setActiveSection }: NavbarProps)
               </motion.button>
 
               {/* Desktop */}
-              <div className="hidden md:flex items-center gap-3">
-                {/* pill container */}
+              <div className="hidden md:flex items-center">
                 <motion.div
                   className="relative flex items-center gap-1 rounded-full border border-white/10 bg-white/[0.04] px-2 py-1.5 backdrop-blur-md"
                   initial={reduceMotion ? undefined : { opacity: 0, y: -6 }}
@@ -168,7 +165,6 @@ export default function Navbar({ activeSection, setActiveSection }: NavbarProps)
                 >
                   <span className="pointer-events-none absolute inset-0 rounded-full ring-1 ring-inset ring-white/5" />
 
-                  {/* slow rim glow */}
                   {!reduceMotion && (
                     <motion.div
                       aria-hidden
@@ -195,7 +191,6 @@ export default function Navbar({ activeSection, setActiveSection }: NavbarProps)
                           active ? "text-white" : "text-white/70 hover:text-white",
                         ].join(" ")}
                       >
-                        {/* active pill */}
                         {active && (
                           <motion.span
                             layoutId="nav-pill"
@@ -204,12 +199,10 @@ export default function Navbar({ activeSection, setActiveSection }: NavbarProps)
                           />
                         )}
 
-                        {/* hover glow */}
                         <span className="pointer-events-none absolute inset-0 rounded-full opacity-0 transition-opacity duration-300 group-hover:opacity-100 bg-white/[0.06]" />
 
                         <span className="relative">{item.label}</span>
 
-                        {/* tiny underline glow + micro dot */}
                         <span
                           className={[
                             "pointer-events-none absolute left-1/2 -bottom-[6px] h-[2px] w-10 -translate-x-1/2 rounded-full",
@@ -227,15 +220,6 @@ export default function Navbar({ activeSection, setActiveSection }: NavbarProps)
                       </motion.button>
                     );
                   })}
-                </motion.div>
-
-                {/* hint */}
-                <motion.div
-                  className="hidden lg:flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-2 text-[11px] font-semibold text-white/55"
-                  initial={reduceMotion ? undefined : { opacity: 0, y: -6 }}
-                  animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
-                  transition={{ delay: 0.25, duration: 0.45, ease: EASE }}
-                >
                 </motion.div>
               </div>
 
@@ -275,7 +259,6 @@ export default function Navbar({ activeSection, setActiveSection }: NavbarProps)
             animate={reduceMotion ? undefined : { opacity: 1 }}
             exit={reduceMotion ? undefined : { opacity: 0 }}
           >
-            {/* backdrop */}
             <motion.button
               className="absolute inset-0 bg-black/60 backdrop-blur-sm"
               onClick={() => setIsOpen(false)}
@@ -285,7 +268,6 @@ export default function Navbar({ activeSection, setActiveSection }: NavbarProps)
               exit={reduceMotion ? undefined : { opacity: 0 }}
             />
 
-            {/* panel */}
             <motion.div
               initial={reduceMotion ? undefined : { x: 28, opacity: 0 }}
               animate={reduceMotion ? undefined : { x: 0, opacity: 1 }}
@@ -293,11 +275,9 @@ export default function Navbar({ activeSection, setActiveSection }: NavbarProps)
               transition={{ duration: 0.3, ease: EASE }}
               className="absolute right-0 top-0 h-full w-[86%] max-w-sm border-l border-white/10 bg-[#070a12]/80 backdrop-blur-xl"
             >
-              {/* gradient edge */}
               <div className="pointer-events-none absolute inset-y-0 left-0 w-px bg-gradient-to-b from-cyan-300/25 via-white/10 to-violet-300/25" />
               <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/15 to-transparent" />
 
-              {/* header */}
               <div className="flex items-center justify-between px-6 pt-6">
                 <div>
                   <div className="text-sm font-semibold text-white">Menu</div>
@@ -363,14 +343,6 @@ export default function Navbar({ activeSection, setActiveSection }: NavbarProps)
                     );
                   })}
                 </div>
-
-                <motion.div
-                  className="mt-5 text-[11px] font-semibold text-white/50"
-                  initial={reduceMotion ? undefined : { opacity: 0, y: 6 }}
-                  animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
-                  transition={{ delay: 0.25, duration: 0.35, ease: EASE }}
-                >
-                </motion.div>
               </div>
             </motion.div>
           </motion.div>
