@@ -30,7 +30,7 @@ export default function Navbar({ activeSection, setActiveSection }: NavbarProps)
   );
 
   useEffect(() => {
-    const onScroll = () => setIsScrolled(window.scrollY > 12);
+    const onScroll = () => setIsScrolled(window.scrollY > 10);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -69,113 +69,136 @@ export default function Navbar({ activeSection, setActiveSection }: NavbarProps)
   return (
     <>
       <motion.nav
-        initial={reduceMotion ? undefined : { y: -12, opacity: 0 }}
+        initial={reduceMotion ? undefined : { y: -10, opacity: 0 }}
         animate={reduceMotion ? undefined : { y: 0, opacity: 1 }}
-        transition={{ duration: 0.65, ease: EASE }}
-        className="fixed top-0 left-0 right-0 z-[120]"
+        transition={{ duration: 0.55, ease: EASE }}
+        className="fixed inset-x-0 top-0 z-[120]"
       >
-        <div
-          className={[
-            "relative border-b transition-all duration-300",
-            isScrolled
-              ? "border-white/12 bg-background/70 backdrop-blur-xl"
-              : "border-white/8 bg-background/35 backdrop-blur-md",
-          ].join(" ")}
-        >
-          {/* glow haze */}
-          <div className="pointer-events-none absolute inset-x-0 -bottom-10 h-10 bg-gradient-to-b from-cyan-400/10 via-violet-400/6 to-transparent blur-2xl" />
+        {/* wrapper */}
+        <div className="relative">
+          {/* top glow line (selaras hero cyan/violet) */}
+          <div className="pointer-events-none absolute inset-x-0 -top-px h-px bg-gradient-to-r from-transparent via-cyan-300/35 to-transparent" />
 
-          {/* hairlines */}
-          <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/12 to-transparent" />
-          <div className="pointer-events-none absolute inset-x-0 -bottom-px h-px bg-gradient-to-r from-transparent via-cyan-300/18 to-transparent" />
+          <div
+            className={[
+              "relative border-b transition-all duration-300",
+              // lebih selaras: glass gelap + sedikit tint cyan/violet
+              isScrolled
+                ? "border-white/10 bg-[#070a12]/70 backdrop-blur-xl"
+                : "border-white/8 bg-[#070a12]/40 backdrop-blur-md",
+            ].join(" ")}
+          >
+            {/* soft haze under navbar */}
+            <div className="pointer-events-none absolute inset-x-0 -bottom-10 h-10 bg-gradient-to-b from-cyan-400/10 via-violet-400/6 to-transparent blur-2xl" />
 
-          {/* subtle moving shine */}
-          {!reduceMotion && (
-            <div className="pointer-events-none absolute inset-0 overflow-hidden">
-              <motion.div
-                aria-hidden
-                className="absolute -left-1/3 top-0 h-full w-1/3 bg-gradient-to-r from-transparent via-white/7 to-transparent"
-                animate={{ x: ["-40%", "340%"] }}
-                transition={{ duration: 7.5, repeat: Infinity, ease: "linear" }}
-              />
-            </div>
-          )}
-
-          <div className="mx-auto flex h-16 max-w-[1200px] items-center justify-between px-4 sm:h-20 sm:px-6">
-            {/* Brand */}
-            <motion.button 
-              onClick={() => goTo("top")} 
-              className="group text-left"
-              whileHover={reduceMotion ? undefined : { scale: 1.05 }}
-              whileTap={reduceMotion ? undefined : { scale: 0.98 }}
-              aria-label="Go to top"
-            >
-              <div className="text-xs font-semibold tracking-tight text-foreground transition duration-300 group-hover:text-primary sm:text-sm">
-                Alexander Ollyvio
+            {/* subtle moving shine */}
+            {!reduceMotion && (
+              <div className="pointer-events-none absolute inset-0 overflow-hidden">
+                <motion.div
+                  aria-hidden
+                  className="absolute -left-1/3 top-0 h-full w-1/3 bg-gradient-to-r from-transparent via-white/8 to-transparent"
+                  animate={{ x: ["-40%", "340%"] }}
+                  transition={{ duration: 7.5, repeat: Infinity, ease: "linear" }}
+                />
               </div>
-              <div className="text-[9px] font-semibold tracking-[0.22em] uppercase text-foreground/60 transition duration-300 group-hover:text-foreground/80 sm:text-[11px]">
-                Portfolio
-              </div>
-            </motion.button>
+            )}
 
-            {/* Desktop */}
-            <div className="hidden md:flex items-center">
-              <div className="flex items-center gap-6">
-                {navItems.map((item, idx) => {
-                  const active = activeSection === item.id;
-
-                  return (
-                    <motion.button
-                      key={item.id}
-                      onClick={() => goTo(item.id)}
-                      initial={reduceMotion ? undefined : { opacity: 0, y: -4 }}
-                      animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
-                      transition={{ delay: 0.03 * idx, duration: 0.35, ease: EASE }}
-                      whileHover={reduceMotion ? undefined : { y: -1 }}
-                      whileTap={reduceMotion ? undefined : { scale: 0.98 }}
-                      className={[
-                        "group relative text-sm font-semibold transition-colors duration-300",
-                        active ? "text-foreground" : "text-foreground/70 hover:text-foreground",
-                      ].join(" ")}
-                    >
-                      {/* hover glow bg */}
-                      <span className="pointer-events-none absolute -inset-x-3 -inset-y-2 rounded-full bg-white/0 transition-colors duration-300 group-hover:bg-white/5" />
-
-                      <span className="relative">{item.label}</span>
-
-                      {/* active underline */}
-                      <span
-                        className={[
-                          "pointer-events-none absolute left-0 -bottom-2 h-[2px] w-full rounded-full",
-                          "bg-gradient-to-r from-cyan-300/0 via-cyan-300/70 to-violet-300/0",
-                          active ? "opacity-100" : "opacity-0 group-hover:opacity-60",
-                        ].join(" ")}
-                      />
-
-                      {/* tiny glow dot (active) */}
-                      {active && (
-                        <motion.span
-                          layoutId="nav-dot"
-                          className="pointer-events-none absolute -bottom-[10px] left-1/2 h-1.5 w-1.5 -translate-x-1/2 rounded-full bg-cyan-300/80 shadow-[0_0_14px_rgba(34,211,238,0.55)]"
-                        />
-                      )}
-                    </motion.button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Mobile */}
-            <div className="flex items-center gap-2 md:hidden">
+            <div className="mx-auto flex h-16 max-w-[1200px] items-center justify-between px-4 sm:h-20 sm:px-6 lg:px-8">
+              {/* Brand */}
               <motion.button
-                onClick={() => setIsOpen((v) => !v)}
-                whileTap={reduceMotion ? undefined : { scale: 0.96 }}
-                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5
-                           text-foreground/80 transition-colors backdrop-blur-md hover:text-foreground hover:bg-white/10"
-                aria-label={isOpen ? "Close menu" : "Open menu"}
+                onClick={() => goTo("top")}
+                className="group relative text-left"
+                whileHover={reduceMotion ? undefined : { y: -1 }}
+                whileTap={reduceMotion ? undefined : { scale: 0.98 }}
+                aria-label="Go to top"
               >
-                {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+                {/* tiny dot accent */}
+                <span className="pointer-events-none absolute -left-3 top-2 hidden h-1.5 w-1.5 rounded-full bg-cyan-300/80 shadow-[0_0_14px_rgba(34,211,238,0.55)] sm:block" />
+
+                <div className="text-xs font-semibold tracking-tight text-white transition group-hover:text-white sm:text-sm">
+                  <span className="bg-gradient-to-r from-white via-white to-white bg-clip-text text-transparent">
+                    Alexander
+                  </span>{" "}
+                  <span className="bg-gradient-to-r from-cyan-300 via-sky-300 to-violet-300 bg-clip-text text-transparent">
+                    Ollyvio
+                  </span>
+                </div>
+                <div className="text-[9px] font-semibold tracking-[0.22em] uppercase text-white/50 transition group-hover:text-white/70 sm:text-[11px]">
+                  Portfolio
+                </div>
               </motion.button>
+
+              {/* Desktop */}
+              <div className="hidden md:flex items-center gap-3">
+                {/* pill container biar rapi */}
+                <div className="relative flex items-center gap-1 rounded-full border border-white/10 bg-white/[0.04] px-2 py-1.5 backdrop-blur-md">
+                  {/* gradient rim */}
+                  <span className="pointer-events-none absolute inset-0 rounded-full [mask:linear-gradient(#000,transparent)] opacity-60" />
+                  <span className="pointer-events-none absolute inset-0 rounded-full ring-1 ring-inset ring-white/5" />
+
+                  {navItems.map((item, idx) => {
+                    const active = activeSection === item.id;
+
+                    return (
+                      <motion.button
+                        key={item.id}
+                        onClick={() => goTo(item.id)}
+                        initial={reduceMotion ? undefined : { opacity: 0, y: -4 }}
+                        animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+                        transition={{ delay: 0.03 * idx, duration: 0.3, ease: EASE }}
+                        whileTap={reduceMotion ? undefined : { scale: 0.98 }}
+                        className={[
+                          "relative rounded-full px-4 py-2 text-sm font-semibold transition-colors duration-300",
+                          active ? "text-white" : "text-white/70 hover:text-white",
+                        ].join(" ")}
+                      >
+                        {/* active pill */}
+                        {active && (
+                          <motion.span
+                            layoutId="nav-pill"
+                            className="pointer-events-none absolute inset-0 rounded-full bg-white/8 ring-1 ring-inset ring-white/10"
+                            transition={{ type: "spring", stiffness: 520, damping: 40 }}
+                          />
+                        )}
+
+                        {/* hover glow */}
+                        <span className="pointer-events-none absolute inset-0 rounded-full opacity-0 transition-opacity duration-300 hover:opacity-100" />
+
+                        <span className="relative">{item.label}</span>
+
+                        {/* tiny underline glow */}
+                        <span
+                          className={[
+                            "pointer-events-none absolute left-1/2 -bottom-[6px] h-[2px] w-10 -translate-x-1/2 rounded-full",
+                            "bg-gradient-to-r from-cyan-300/0 via-cyan-300/60 to-violet-300/0",
+                            active ? "opacity-100" : "opacity-0",
+                          ].join(" ")}
+                        />
+                      </motion.button>
+                    );
+                  })}
+                </div>
+
+                {/* optional hint (rapi & kecil) */}
+                <div className="hidden lg:flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-2 text-[11px] font-semibold text-white/55">
+                  <span className="rounded-md border border-white/10 bg-white/5 px-2 py-1">Ctrl</span>
+                  <span>+</span>
+                  <span className="rounded-md border border-white/10 bg-white/5 px-2 py-1">K</span>
+                </div>
+              </div>
+
+              {/* Mobile */}
+              <div className="flex items-center gap-2 md:hidden">
+                <motion.button
+                  onClick={() => setIsOpen((v) => !v)}
+                  whileTap={reduceMotion ? undefined : { scale: 0.96 }}
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.06]
+                           text-white/80 backdrop-blur-md transition-colors hover:text-white hover:bg-white/10"
+                  aria-label={isOpen ? "Close menu" : "Open menu"}
+                >
+                  {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+                </motion.button>
+              </div>
             </div>
           </div>
         </div>
@@ -206,16 +229,16 @@ export default function Navbar({ activeSection, setActiveSection }: NavbarProps)
               animate={reduceMotion ? undefined : { x: 0, opacity: 1 }}
               exit={reduceMotion ? undefined : { x: 28, opacity: 0 }}
               transition={{ duration: 0.28, ease: EASE }}
-              className="absolute right-0 top-0 h-full w-[86%] max-w-sm border-l border-white/12 bg-background/75 backdrop-blur-xl"
+              className="absolute right-0 top-0 h-full w-[86%] max-w-sm border-l border-white/10 bg-[#070a12]/80 backdrop-blur-xl"
             >
               {/* gradient edge */}
-              <div className="pointer-events-none absolute inset-y-0 left-0 w-px bg-gradient-to-b from-cyan-300/20 via-white/10 to-violet-300/20" />
+              <div className="pointer-events-none absolute inset-y-0 left-0 w-px bg-gradient-to-b from-cyan-300/25 via-white/10 to-violet-300/25" />
               <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/15 to-transparent" />
 
               <div className="flex items-center justify-between px-6 pt-6">
                 <div>
-                  <div className="text-sm font-semibold text-foreground">Menu</div>
-                  <div className="mt-1 text-[11px] font-semibold tracking-[0.22em] uppercase text-foreground/60">
+                  <div className="text-sm font-semibold text-white">Menu</div>
+                  <div className="mt-1 text-[11px] font-semibold tracking-[0.22em] uppercase text-white/55">
                     Sections
                   </div>
                 </div>
@@ -225,7 +248,7 @@ export default function Navbar({ activeSection, setActiveSection }: NavbarProps)
                   whileHover={reduceMotion ? undefined : { rotate: 6 }}
                   whileTap={reduceMotion ? undefined : { scale: 0.96 }}
                   className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5
-                             text-foreground/80 transition-colors hover:text-foreground hover:bg-white/10"
+                             text-white/80 transition-colors hover:text-white hover:bg-white/10"
                   aria-label="Close"
                 >
                   <X className="h-5 w-5" />
@@ -249,11 +272,10 @@ export default function Navbar({ activeSection, setActiveSection }: NavbarProps)
                         className={[
                           "group relative w-full overflow-hidden rounded-2xl px-4 py-3 text-left text-sm font-semibold transition-all duration-300",
                           active
-                            ? "border border-white/14 bg-white/10 text-foreground"
-                            : "border border-white/10 bg-white/5 text-foreground/75 hover:text-foreground hover:bg-white/8",
+                            ? "border border-white/14 bg-white/10 text-white"
+                            : "border border-white/10 bg-white/[0.04] text-white/75 hover:text-white hover:bg-white/8",
                         ].join(" ")}
                       >
-                        {/* hover shimmer */}
                         {!reduceMotion && (
                           <span className="pointer-events-none absolute -left-1/3 top-0 h-full w-1/3 bg-gradient-to-r from-transparent via-white/8 to-transparent opacity-0 transition-all duration-700 group-hover:opacity-100 group-hover:translate-x-[260%]" />
                         )}
@@ -267,6 +289,12 @@ export default function Navbar({ activeSection, setActiveSection }: NavbarProps)
                       </motion.button>
                     );
                   })}
+                </div>
+
+                <div className="mt-5 text-[11px] font-semibold text-white/50">
+                  Tip: Press{" "}
+                  <span className="rounded-md border border-white/10 bg-white/5 px-2 py-1">Ctrl</span> +{" "}
+                  <span className="rounded-md border border-white/10 bg-white/5 px-2 py-1">K</span>
                 </div>
               </div>
             </motion.div>
