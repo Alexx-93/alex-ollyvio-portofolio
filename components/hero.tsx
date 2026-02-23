@@ -40,11 +40,32 @@ function AnimatedCounter({ end, duration = 900 }: { end: number; duration?: numb
   return <span>{value}</span>;
 }
 
+/**
+ * ✅ Fix mobile: iOS Safari viewport height issues.
+ * We set --vh based on window.innerHeight (not 100vh/100dvh), so hero won't "rusak" on HP.
+ */
+function useVhVar() {
+  useEffect(() => {
+    const set = () => {
+      const vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty("--vh", `${vh}px`);
+    };
+    set();
+    window.addEventListener("resize", set);
+    window.addEventListener("orientationchange", set);
+    return () => {
+      window.removeEventListener("resize", set);
+      window.removeEventListener("orientationchange", set);
+    };
+  }, []);
+}
+
 function useMouseSpotlight() {
   const raf = useRef<number | null>(null);
   const [p, setP] = useState({ x: 50, y: 45 });
 
   useEffect(() => {
+    // ✅ on mobile, no mousemove -> keep center (no issue)
     const onMove = (e: MouseEvent) => {
       if (raf.current) return;
       raf.current = requestAnimationFrame(() => {
@@ -73,6 +94,13 @@ function useTilt(maxDeg = 10) {
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
+
+    // ✅ disable tilt on touch devices (prevents weird jump/scroll issues)
+    const isTouch =
+      typeof window !== "undefined" &&
+      ("ontouchstart" in window || navigator.maxTouchPoints > 0);
+
+    if (isTouch) return;
 
     const onMove = (e: MouseEvent) => {
       const r = el.getBoundingClientRect();
@@ -116,6 +144,12 @@ function MagneticButton({
     if (reduceMotion) return;
     const el = ref.current;
     if (!el) return;
+
+    // ✅ disable magnetic on touch
+    const isTouch =
+      typeof window !== "undefined" &&
+      ("ontouchstart" in window || navigator.maxTouchPoints > 0);
+    if (isTouch) return;
 
     const onMove = (e: MouseEvent) => {
       const r = el.getBoundingClientRect();
@@ -188,6 +222,9 @@ export default function Hero({ setActiveSection }: { setActiveSection: (section:
   const spotlight = useMouseSpotlight();
   const tilt = useTilt(10);
 
+  // ✅ apply --vh variable for mobile stability
+  useVhVar();
+
   const overlayStyle = useMemo(
     () => ({
       background: `
@@ -211,10 +248,11 @@ export default function Hero({ setActiveSection }: { setActiveSection: (section:
     <section
       className="
         relative overflow-hidden
-        [--nav:80px] md:[--nav:80px]
+        [--nav:80px] sm:[--nav:80px]
         pt-[var(--nav)]
-        h-[calc(100dvh)]
       "
+      // ✅ stable height on iOS: calc(var(--vh)*100) instead of 100vh/100dvh
+      style={{ height: "calc(var(--vh, 1vh) * 100)" }}
     >
       {/* background */}
       <div className="absolute inset-0 -z-20 bg-gradient-to-br from-[#070a12] via-[#0b1220] to-[#060812]" />
@@ -230,15 +268,29 @@ export default function Hero({ setActiveSection }: { setActiveSection: (section:
       <div className="pointer-events-none absolute -right-28 bottom-10 -z-10 h-[520px] w-[520px] rounded-full bg-violet-400/10 blur-3xl" />
 
       {/* content area: sisa layar setelah navbar */}
-      <div className="h-[calc(100dvh-var(--nav))]">
-        <div className="mx-auto flex h-full w-full max-w-[1200px] items-center px-4 sm:px-6 lg:px-8">
-          <div className="grid w-full items-center gap-8 lg:grid-cols-2 lg:gap-12">
+      <div className="h-[calc(calc(var(--vh,1vh)*100)-var(--nav))]">
+        {/* ✅ mobile: allow scroll if content too tall (prevents "ketumpuk/rusak") */}
+        <div className="mx-auto h-full w-full max-w-[1200px] px-4 sm:px-6 lg:px-8">
+          <div
+            className="
+              grid h-full w-full items-center gap-8 lg:grid-cols-2 lg:gap-12
+              overflow-y-auto lg:overflow-visible
+              [scrollbar-width:none] [-ms-overflow-style:none]
+            "
+          >
+            {/* hide webkit scrollbar on mobile */}
+            <style jsx>{`
+              div::-webkit-scrollbar {
+                display: none;
+              }
+            `}</style>
+
             {/* left */}
             <motion.div
               initial={reduceMotion ? undefined : { opacity: 0, y: 18 }}
               animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
               transition={{ duration: 0.9, ease: EASE }}
-              className="space-y-6"
+              className="space-y-5 sm:space-y-6 py-6 lg:py-0"
             >
               {/* badge */}
               <div className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/5 px-4 py-2 backdrop-blur-md">
@@ -249,7 +301,7 @@ export default function Hero({ setActiveSection }: { setActiveSection: (section:
               </div>
 
               {/* title */}
-              <h1 className="text-balance font-semibold tracking-tight text-white leading-[0.98] text-[clamp(40px,6vw,72px)]">
+              <h1 className="text-balance font-semibold tracking-tight text-white leading-[0.98] text-[clamp(34px,9vw,72px)]">
                 Alexander{" "}
                 <PremiumName
                   text="Ollyvio"
@@ -257,7 +309,7 @@ export default function Hero({ setActiveSection }: { setActiveSection: (section:
                 />
               </h1>
 
-              <p className="max-w-[56ch] text-base leading-relaxed text-white/70 sm:text-lg">
+              <p className="max-w-[56ch] text-[13px] leading-relaxed text-white/70 sm:text-lg">
                 Computer science student at Universitas Atma Jaya Yogyakarta focused on web development and cybersecurity,
                 specializing in frontend and UI/UX. Committed to building modern, secure, and user-centered digital systems.
               </p>
@@ -324,20 +376,20 @@ export default function Hero({ setActiveSection }: { setActiveSection: (section:
               </div>
 
               {/* stats */}
-              <div className="grid max-w-xl grid-cols-1 gap-3 sm:grid-cols-3">
+              <div className="grid max-w-xl grid-cols-3 gap-2 sm:grid-cols-3 sm:gap-3">
                 {[
                   { label: "Projects", value: 7 },
                   { label: "Stacks", value: 6 },
-                  { label: "Experiences", value: 2 },
+                  { label: "Exp", value: 2 },
                 ].map((s) => (
                   <div
                     key={s.label}
-                    className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-md transition-colors hover:bg-white/8"
+                    className="rounded-2xl border border-white/10 bg-white/5 px-3 py-3 backdrop-blur-md transition-colors hover:bg-white/8 sm:p-4"
                   >
-                    <div className="text-2xl font-semibold text-white">
+                    <div className="text-xl font-semibold text-white sm:text-2xl">
                       <AnimatedCounter end={s.value} />+
                     </div>
-                    <div className="mt-1 text-xs font-semibold tracking-[0.18em] uppercase text-white/55">
+                    <div className="mt-1 text-[10px] font-semibold tracking-[0.18em] uppercase text-white/55 sm:text-xs">
                       {s.label}
                     </div>
                   </div>
@@ -350,8 +402,9 @@ export default function Hero({ setActiveSection }: { setActiveSection: (section:
               initial={reduceMotion ? undefined : { opacity: 0, y: 18, scale: 0.97 }}
               animate={reduceMotion ? undefined : { opacity: 1, y: 0, scale: 1 }}
               transition={{ duration: 0.9, ease: EASE }}
-              className="relative flex justify-center lg:justify-end"
+              className="relative flex justify-center lg:justify-end pb-8 lg:pb-0"
             >
+              {/* ✅ mobile: make it smaller and never overflow height */}
               <motion.div
                 ref={tilt.ref}
                 style={
@@ -360,9 +413,10 @@ export default function Hero({ setActiveSection }: { setActiveSection: (section:
                     : { rotateX: tilt.rotateX, rotateY: tilt.rotateY, transformStyle: "preserve-3d" }
                 }
                 className="
-                  relative w-full max-w-[360px] sm:max-w-[420px] md:max-w-[460px]
-                  max-h-[calc(100dvh-var(--nav)-96px)]
-                  aspect-[3/4] overflow-hidden rounded-3xl
+                  relative w-full
+                  max-w-[320px] sm:max-w-[380px] md:max-w-[420px] lg:max-w-[460px]
+                  aspect-[4/3] sm:aspect-[3/4]
+                  overflow-hidden rounded-3xl
                   border border-white/12 bg-white/5 backdrop-blur-xl shadow-2xl
                 "
               >
@@ -370,15 +424,16 @@ export default function Hero({ setActiveSection }: { setActiveSection: (section:
                 <div className="pointer-events-none absolute -inset-10 bg-violet-400/10 blur-3xl" />
 
                 <div className="absolute inset-0" style={{ transform: "translateZ(24px)" }}>
+                  {/* ✅ use contain + padding so photo never crops on any device */}
                   <Image
                     src="/images/img-2273.jpeg"
                     alt="Landscape"
                     fill
-                    className="object-cover object-center"
-                    sizes="(max-width: 640px) 90vw, (max-width: 1024px) 420px, 460px"
+                    className="object-contain object-center p-4 sm:p-5"
+                    sizes="(max-width: 640px) 92vw, (max-width: 1024px) 420px, 460px"
                     priority
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-black/10 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent" />
                 </div>
 
                 <div className="pointer-events-none absolute inset-0 opacity-70">
@@ -386,7 +441,7 @@ export default function Hero({ setActiveSection }: { setActiveSection: (section:
                   <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-white/16 to-transparent" />
                 </div>
 
-                <div className="absolute bottom-5 left-5 right-5 flex items-center justify-between">
+                <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
                   <div className="rounded-full border border-white/14 bg-black/30 px-4 py-2 text-[11px] font-semibold tracking-[0.22em] uppercase text-white/70 backdrop-blur-md">
                     Merbabu Peak • 2025
                   </div>
