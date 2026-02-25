@@ -40,10 +40,7 @@ function AnimatedCounter({ end, duration = 900 }: { end: number; duration?: numb
   return <span>{value}</span>;
 }
 
-/**
- * ✅ Fix mobile: iOS Safari viewport height issues.
- * We set --vh based on window.innerHeight (not 100vh/100dvh), so hero won't "rusak" on HP.
- */
+/** ✅ iOS Safari viewport fix */
 function useVhVar() {
   useEffect(() => {
     const set = () => {
@@ -65,7 +62,6 @@ function useMouseSpotlight() {
   const [p, setP] = useState({ x: 50, y: 45 });
 
   useEffect(() => {
-    // ✅ on mobile, no mousemove -> keep center (no issue)
     const onMove = (e: MouseEvent) => {
       if (raf.current) return;
       raf.current = requestAnimationFrame(() => {
@@ -95,11 +91,8 @@ function useTilt(maxDeg = 10) {
     const el = ref.current;
     if (!el) return;
 
-    // ✅ disable tilt on touch devices (prevents weird jump/scroll issues)
     const isTouch =
-      typeof window !== "undefined" &&
-      ("ontouchstart" in window || navigator.maxTouchPoints > 0);
-
+      typeof window !== "undefined" && ("ontouchstart" in window || navigator.maxTouchPoints > 0);
     if (isTouch) return;
 
     const onMove = (e: MouseEvent) => {
@@ -145,10 +138,8 @@ function MagneticButton({
     const el = ref.current;
     if (!el) return;
 
-    // ✅ disable magnetic on touch
     const isTouch =
-      typeof window !== "undefined" &&
-      ("ontouchstart" in window || navigator.maxTouchPoints > 0);
+      typeof window !== "undefined" && ("ontouchstart" in window || navigator.maxTouchPoints > 0);
     if (isTouch) return;
 
     const onMove = (e: MouseEvent) => {
@@ -222,7 +213,6 @@ export default function Hero({ setActiveSection }: { setActiveSection: (section:
   const spotlight = useMouseSpotlight();
   const tilt = useTilt(10);
 
-  // ✅ apply --vh variable for mobile stability
   useVhVar();
 
   const overlayStyle = useMemo(
@@ -246,13 +236,8 @@ export default function Hero({ setActiveSection }: { setActiveSection: (section:
 
   return (
     <section
-      className="
-        relative overflow-hidden
-        [--nav:80px] sm:[--nav:80px]
-        pt-[var(--nav)]
-      "
-      // ✅ stable height on iOS: calc(var(--vh)*100) instead of 100vh/100dvh
-      style={{ height: "calc(var(--vh, 1vh) * 100)" }}
+      className="relative overflow-hidden [--nav:80px] sm:[--nav:80px] pt-[var(--nav)]"
+      style={{ minHeight: "calc(var(--vh, 1vh) * 100)" }}
     >
       {/* background */}
       <div className="absolute inset-0 -z-20 bg-gradient-to-br from-[#070a12] via-[#0b1220] to-[#060812]" />
@@ -267,188 +252,167 @@ export default function Hero({ setActiveSection }: { setActiveSection: (section:
       <div className="pointer-events-none absolute -left-24 top-20 -z-10 h-[420px] w-[420px] rounded-full bg-cyan-400/10 blur-3xl" />
       <div className="pointer-events-none absolute -right-28 bottom-10 -z-10 h-[520px] w-[520px] rounded-full bg-violet-400/10 blur-3xl" />
 
-      {/* content area: sisa layar setelah navbar */}
-      <div className="h-[calc(calc(var(--vh,1vh)*100)-var(--nav))]">
-        {/* ✅ mobile: allow scroll if content too tall (prevents "ketumpuk/rusak") */}
-        <div className="mx-auto h-full w-full max-w-[1200px] px-4 sm:px-6 lg:px-8">
-          <div
-            className="
-              grid h-full w-full items-center gap-8 lg:grid-cols-2 lg:gap-12
-              overflow-y-auto lg:overflow-visible
-              [scrollbar-width:none] [-ms-overflow-style:none]
-            "
+      <div className="mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-8">
+        <div
+          className="
+            grid items-center gap-10
+            py-10 sm:py-14 lg:py-0
+            lg:min-h-[calc(calc(var(--vh,1vh)*100)-var(--nav))]
+            lg:grid-cols-2 lg:gap-12
+          "
+        >
+          {/* left */}
+          <motion.div
+            initial={reduceMotion ? undefined : { opacity: 0, y: 18 }}
+            animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, ease: EASE }}
+            className="space-y-5 sm:space-y-6"
           >
-            {/* hide webkit scrollbar on mobile */}
-            <style jsx>{`
-              div::-webkit-scrollbar {
-                display: none;
-              }
-            `}</style>
+            <div className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/5 px-4 py-2 backdrop-blur-md">
+              <span className="h-1.5 w-1.5 rounded-full bg-cyan-300 shadow-[0_0_16px_rgba(34,211,238,0.6)]" />
+              <span className="text-[11px] font-semibold tracking-[0.22em] uppercase text-white/70">
+                College Students
+              </span>
+            </div>
 
-            {/* left */}
+            <h1 className="text-balance font-semibold tracking-tight text-white leading-[0.98] text-[clamp(34px,9vw,72px)]">
+              Alexander{" "}
+              <PremiumName
+                text="Ollyvio"
+                className="bg-gradient-to-r from-cyan-300 via-sky-300 to-violet-300 bg-clip-text text-transparent"
+              />
+            </h1>
+
+            <p className="max-w-[56ch] text-[13px] leading-relaxed text-white/70 sm:text-lg">
+              Computer science student at Universitas Atma Jaya Yogyakarta focused on web development and cybersecurity,
+              specializing in frontend and UI/UX. Committed to building modern, secure, and user-centered digital systems.
+            </p>
+
             <motion.div
-              initial={reduceMotion ? undefined : { opacity: 0, y: 18 }}
+              className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center"
+              initial={reduceMotion ? undefined : { opacity: 0, y: 10 }}
               animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
-              transition={{ duration: 0.9, ease: EASE }}
-              className="space-y-5 sm:space-y-6 py-6 lg:py-0"
+              transition={{ delay: 0.35, duration: 0.6, ease: EASE }}
             >
-              {/* badge */}
-              <div className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/5 px-4 py-2 backdrop-blur-md">
-                <span className="h-1.5 w-1.5 rounded-full bg-cyan-300 shadow-[0_0_16px_rgba(34,211,238,0.6)]" />
-                <span className="text-[11px] font-semibold tracking-[0.22em] uppercase text-white/70">
-                  College Students
-                </span>
-              </div>
-
-              {/* title */}
-              <h1 className="text-balance font-semibold tracking-tight text-white leading-[0.98] text-[clamp(34px,9vw,72px)]">
-                Alexander{" "}
-                <PremiumName
-                  text="Ollyvio"
-                  className="bg-gradient-to-r from-cyan-300 via-sky-300 to-violet-300 bg-clip-text text-transparent"
-                />
-              </h1>
-
-              <p className="max-w-[56ch] text-[13px] leading-relaxed text-white/70 sm:text-lg">
-                Computer science student at Universitas Atma Jaya Yogyakarta focused on web development and cybersecurity,
-                specializing in frontend and UI/UX. Committed to building modern, secure, and user-centered digital systems.
-              </p>
-
-              {/* CTAs */}
-              <motion.div
-                className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center"
-                initial={reduceMotion ? undefined : { opacity: 0, y: 10 }}
-                animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
-                transition={{ delay: 0.35, duration: 0.6, ease: EASE }}
+              <MagneticButton
+                onClick={() => goTo("projects")}
+                className="group inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-white px-6 text-sm font-semibold text-black
+                           shadow-[0_16px_60px_rgba(255,255,255,0.08)]
+                           transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_22px_80px_rgba(34,211,238,0.18)]
+                           sm:w-auto"
               >
-                <MagneticButton
-                  onClick={() => goTo("projects")}
-                  className="group inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-white px-6 text-sm font-semibold text-black
-                             shadow-[0_16px_60px_rgba(255,255,255,0.08)]
-                             transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_22px_80px_rgba(34,211,238,0.18)]
-                             sm:w-auto"
-                >
-                  Explore Projects
-                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                </MagneticButton>
+                Explore Projects
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+              </MagneticButton>
 
-                <MagneticButton
-                  onClick={() => goTo("contact")}
-                  className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-full border border-white/16 bg-white/6 px-6 text-sm font-semibold text-white
-                             backdrop-blur-md transition-colors hover:bg-white/10 sm:w-auto"
-                >
-                  <Mail className="h-4 w-4" />
-                  Contact
-                </MagneticButton>
+              <MagneticButton
+                onClick={() => goTo("contact")}
+                className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-full border border-white/16 bg-white/6 px-6 text-sm font-semibold text-white
+                           backdrop-blur-md transition-colors hover:bg-white/10 sm:w-auto"
+              >
+                <Mail className="h-4 w-4" />
+                Contact
+              </MagneticButton>
 
+              <a
+                href="/cv.pdf"
+                className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-full border border-white/16 bg-white/0 px-6 text-sm font-semibold text-white/80
+                           transition-colors hover:text-white hover:bg-white/6 sm:w-auto"
+              >
+                <Download className="h-4 w-4" />
+                Download CV
+              </a>
+            </motion.div>
+
+            <div className="flex items-center gap-3 pt-1">
+              {[
+                { href: "https://github.com/", label: "GitHub", icon: Github },
+                { href: "https://www.linkedin.com/", label: "LinkedIn", icon: Linkedin },
+              ].map((s) => (
                 <a
-                  href="/cv.pdf"
-                  className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-full border border-white/16 bg-white/0 px-6 text-sm font-semibold text-white/80
-                             transition-colors hover:text-white hover:bg-white/6 sm:w-auto"
+                  key={s.label}
+                  href={s.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={s.label}
+                  className="group relative inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/12 bg-white/5 backdrop-blur-md
+                             transition-colors hover:bg-white/10"
                 >
-                  <Download className="h-4 w-4" />
-                  Download CV
-                </a>
-              </motion.div>
-
-              {/* socials */}
-              <div className="flex items-center gap-3 pt-1">
-                {[
-                  { href: "https://github.com/", label: "GitHub", icon: Github },
-                  { href: "https://www.linkedin.com/", label: "LinkedIn", icon: Linkedin },
-                ].map((s) => (
-                  <a
-                    key={s.label}
-                    href={s.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={s.label}
-                    className="group relative inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/12 bg-white/5 backdrop-blur-md
-                               transition-colors hover:bg-white/10"
-                  >
-                    <span
-                      className="pointer-events-none absolute -inset-6 opacity-0 transition-opacity duration-500 group-hover:opacity-100
-                                 bg-[radial-gradient(circle,rgba(34,211,238,0.14),transparent_60%)] blur-xl rounded-full"
-                    />
-                    <s.icon className="relative h-5 w-5 text-white/75 group-hover:text-white" />
-                  </a>
-                ))}
-              </div>
-
-              {/* stats */}
-              <div className="grid max-w-xl grid-cols-3 gap-2 sm:grid-cols-3 sm:gap-3">
-                {[
-                  { label: "Projects", value: 7 },
-                  { label: "Stacks", value: 6 },
-                  { label: "Exp", value: 2 },
-                ].map((s) => (
-                  <div
-                    key={s.label}
-                    className="rounded-2xl border border-white/10 bg-white/5 px-3 py-3 backdrop-blur-md transition-colors hover:bg-white/8 sm:p-4"
-                  >
-                    <div className="text-xl font-semibold text-white sm:text-2xl">
-                      <AnimatedCounter end={s.value} />+
-                    </div>
-                    <div className="mt-1 text-[10px] font-semibold tracking-[0.18em] uppercase text-white/55 sm:text-xs">
-                      {s.label}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </motion.div>
-
-            {/* right image */}
-            <motion.div
-              initial={reduceMotion ? undefined : { opacity: 0, y: 18, scale: 0.97 }}
-              animate={reduceMotion ? undefined : { opacity: 1, y: 0, scale: 1 }}
-              transition={{ duration: 0.9, ease: EASE }}
-              className="relative flex justify-center lg:justify-end pb-8 lg:pb-0"
-            >
-              {/* ✅ mobile: make it smaller and never overflow height */}
-              <motion.div
-                ref={tilt.ref}
-                style={
-                  reduceMotion
-                    ? undefined
-                    : { rotateX: tilt.rotateX, rotateY: tilt.rotateY, transformStyle: "preserve-3d" }
-                }
-                className="
-                  relative w-full
-                  max-w-[320px] sm:max-w-[380px] md:max-w-[420px] lg:max-w-[460px]
-                  aspect-[4/3] sm:aspect-[3/4]
-                  overflow-hidden rounded-3xl
-                  border border-white/12 bg-white/5 backdrop-blur-xl shadow-2xl
-                "
-              >
-                <div className="pointer-events-none absolute -inset-10 bg-cyan-400/10 blur-3xl" />
-                <div className="pointer-events-none absolute -inset-10 bg-violet-400/10 blur-3xl" />
-
-                <div className="absolute inset-0" style={{ transform: "translateZ(24px)" }}>
-                  {/* ✅ use contain + padding so photo never crops on any device */}
-                  <Image
-                    src="/images/img-2273.jpeg"
-                    alt="Landscape"
-                    fill
-                    className="object-contain object-center p-4 sm:p-5"
-                    sizes="(max-width: 640px) 92vw, (max-width: 1024px) 420px, 460px"
-                    priority
+                  <span
+                    className="pointer-events-none absolute -inset-6 opacity-0 transition-opacity duration-500 group-hover:opacity-100
+                               bg-[radial-gradient(circle,rgba(34,211,238,0.14),transparent_60%)] blur-xl rounded-full"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent" />
-                </div>
+                  <s.icon className="relative h-5 w-5 text-white/75 group-hover:text-white" />
+                </a>
+              ))}
+            </div>
 
-                <div className="pointer-events-none absolute inset-0 opacity-70">
-                  <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-                  <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-white/16 to-transparent" />
-                </div>
-
-                <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
-                  <div className="rounded-full border border-white/14 bg-black/30 px-4 py-2 text-[11px] font-semibold tracking-[0.22em] uppercase text-white/70 backdrop-blur-md">
-                    Merbabu Peak • 2025
+            <div className="grid max-w-xl grid-cols-3 gap-2 sm:gap-3">
+              {[
+                { label: "Projects", value: 7 },
+                { label: "Stacks", value: 6 },
+                { label: "Exp", value: 2 },
+              ].map((s) => (
+                <div
+                  key={s.label}
+                  className="rounded-2xl border border-white/10 bg-white/5 px-3 py-3 backdrop-blur-md transition-colors hover:bg-white/8 sm:p-4"
+                >
+                  <div className="text-xl font-semibold text-white sm:text-2xl">
+                    <AnimatedCounter end={s.value} />+
+                  </div>
+                  <div className="mt-1 text-[10px] font-semibold tracking-[0.18em] uppercase text-white/55 sm:text-xs">
+                    {s.label}
                   </div>
                 </div>
-              </motion.div>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* ✅ right photo: NO frame/container */}
+          <motion.div
+            initial={reduceMotion ? undefined : { opacity: 0, y: 18, scale: 0.97 }}
+            animate={reduceMotion ? undefined : { opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.9, ease: EASE }}
+            className="relative flex justify-center lg:justify-end pb-6 sm:pb-10 lg:pb-0"
+          >
+            <motion.div
+              ref={tilt.ref}
+              style={
+                reduceMotion
+                  ? undefined
+                  : { rotateX: tilt.rotateX, rotateY: tilt.rotateY, transformStyle: "preserve-3d" }
+              }
+              className="
+                relative w-full
+                max-w-[320px] sm:max-w-[380px] md:max-w-[420px] lg:max-w-[460px]
+                aspect-[4/3] sm:aspect-[3/4]
+              "
+            >
+              {/* glow halus di belakang foto (bukan bingkai) */}
+              <div className="pointer-events-none absolute -inset-10 -z-10 rounded-[40px] bg-cyan-400/10 blur-3xl" />
+              <div className="pointer-events-none absolute -inset-10 -z-10 rounded-[40px] bg-violet-400/10 blur-3xl" />
+
+              <div className="absolute inset-0" style={{ transform: "translateZ(24px)" }}>
+                <Image
+                  src="/images/img-2273.jpeg"
+                  alt="Landscape"
+                  fill
+                  className="object-contain object-center"
+                  sizes="(max-width: 640px) 92vw, (max-width: 1024px) 420px, 460px"
+                  priority
+                />
+              </div>
+
+              {/* label kecil (optional). hapus kalau mau full clean */}
+              <div className="absolute bottom-3 left-3">
+                <div className="rounded-full border border-white/12 bg-black/25 px-3 py-1.5 text-[10px] font-semibold tracking-[0.22em] uppercase text-white/70 backdrop-blur-md">
+                  Merbabu Peak • 2025
+                </div>
+              </div>
             </motion.div>
-          </div>
+
+            <div className="lg:hidden h-2" />
+          </motion.div>
         </div>
       </div>
     </section>
