@@ -237,6 +237,7 @@ export default function Hero({ setActiveSection }: { setActiveSection: (section:
   return (
     <section
       className="relative overflow-hidden [--nav:80px] sm:[--nav:80px] pt-[var(--nav)]"
+      // ✅ jangan paksa fixed-height; pakai minHeight biar mobile aman dan tidak “numpuk”
       style={{ minHeight: "calc(var(--vh, 1vh) * 100)" }}
     >
       {/* background */}
@@ -252,6 +253,7 @@ export default function Hero({ setActiveSection }: { setActiveSection: (section:
       <div className="pointer-events-none absolute -left-24 top-20 -z-10 h-[420px] w-[420px] rounded-full bg-cyan-400/10 blur-3xl" />
       <div className="pointer-events-none absolute -right-28 bottom-10 -z-10 h-[520px] w-[520px] rounded-full bg-violet-400/10 blur-3xl" />
 
+      {/* ✅ content wrapper: biarkan page yang scroll (no nested scroll) */}
       <div className="mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-8">
         <div
           className="
@@ -268,6 +270,7 @@ export default function Hero({ setActiveSection }: { setActiveSection: (section:
             transition={{ duration: 0.9, ease: EASE }}
             className="space-y-5 sm:space-y-6"
           >
+            {/* badge */}
             <div className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/5 px-4 py-2 backdrop-blur-md">
               <span className="h-1.5 w-1.5 rounded-full bg-cyan-300 shadow-[0_0_16px_rgba(34,211,238,0.6)]" />
               <span className="text-[11px] font-semibold tracking-[0.22em] uppercase text-white/70">
@@ -275,6 +278,7 @@ export default function Hero({ setActiveSection }: { setActiveSection: (section:
               </span>
             </div>
 
+            {/* title */}
             <h1 className="text-balance font-semibold tracking-tight text-white leading-[0.98] text-[clamp(34px,9vw,72px)]">
               Alexander{" "}
               <PremiumName
@@ -288,6 +292,7 @@ export default function Hero({ setActiveSection }: { setActiveSection: (section:
               specializing in frontend and UI/UX. Committed to building modern, secure, and user-centered digital systems.
             </p>
 
+            {/* CTAs */}
             <motion.div
               className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center"
               initial={reduceMotion ? undefined : { opacity: 0, y: 10 }}
@@ -324,6 +329,7 @@ export default function Hero({ setActiveSection }: { setActiveSection: (section:
               </a>
             </motion.div>
 
+            {/* socials */}
             <div className="flex items-center gap-3 pt-1">
               {[
                 { href: "https://github.com/", label: "GitHub", icon: Github },
@@ -347,6 +353,7 @@ export default function Hero({ setActiveSection }: { setActiveSection: (section:
               ))}
             </div>
 
+            {/* stats */}
             <div className="grid max-w-xl grid-cols-3 gap-2 sm:gap-3">
               {[
                 { label: "Projects", value: 7 },
@@ -368,11 +375,12 @@ export default function Hero({ setActiveSection }: { setActiveSection: (section:
             </div>
           </motion.div>
 
-          {/* ✅ right photo: NO frame/container */}
+          {/* right image */}
           <motion.div
             initial={reduceMotion ? undefined : { opacity: 0, y: 18, scale: 0.97 }}
             animate={reduceMotion ? undefined : { opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: 0.9, ease: EASE }}
+            // ✅ mobile: taruh gambar setelah teks, dan kasih ruang aman bawah
             className="relative flex justify-center lg:justify-end pb-6 sm:pb-10 lg:pb-0"
           >
             <motion.div
@@ -386,31 +394,38 @@ export default function Hero({ setActiveSection }: { setActiveSection: (section:
                 relative w-full
                 max-w-[320px] sm:max-w-[380px] md:max-w-[420px] lg:max-w-[460px]
                 aspect-[4/3] sm:aspect-[3/4]
+                overflow-hidden rounded-3xl
+                border border-white/12 bg-white/5 backdrop-blur-xl shadow-2xl
               "
             >
-              {/* glow halus di belakang foto (bukan bingkai) */}
-              <div className="pointer-events-none absolute -inset-10 -z-10 rounded-[40px] bg-cyan-400/10 blur-3xl" />
-              <div className="pointer-events-none absolute -inset-10 -z-10 rounded-[40px] bg-violet-400/10 blur-3xl" />
+              <div className="pointer-events-none absolute -inset-10 bg-cyan-400/10 blur-3xl" />
+              <div className="pointer-events-none absolute -inset-10 bg-violet-400/10 blur-3xl" />
 
               <div className="absolute inset-0" style={{ transform: "translateZ(24px)" }}>
                 <Image
                   src="/images/img-2273.jpeg"
                   alt="Landscape"
                   fill
-                  className="object-contain object-center"
+                  className="object-contain object-center p-4 sm:p-5"
                   sizes="(max-width: 640px) 92vw, (max-width: 1024px) 420px, 460px"
                   priority
                 />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent" />
               </div>
 
-              {/* label kecil (optional). hapus kalau mau full clean */}
-              <div className="absolute bottom-3 left-3">
-                <div className="rounded-full border border-white/12 bg-black/25 px-3 py-1.5 text-[10px] font-semibold tracking-[0.22em] uppercase text-white/70 backdrop-blur-md">
+              <div className="pointer-events-none absolute inset-0 opacity-70">
+                <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+                <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-white/16 to-transparent" />
+              </div>
+
+              <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
+                <div className="rounded-full border border-white/14 bg-black/30 px-4 py-2 text-[11px] font-semibold tracking-[0.22em] uppercase text-white/70 backdrop-blur-md">
                   Merbabu Peak • 2025
                 </div>
               </div>
             </motion.div>
 
+            {/* ✅ spacer kecil khusus mobile biar gak “nempel” sama section berikutnya */}
             <div className="lg:hidden h-2" />
           </motion.div>
         </div>
