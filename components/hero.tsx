@@ -82,7 +82,7 @@ function useMouseSpotlight() {
   return p;
 }
 
-function useTilt(maxDeg = 10) {
+function useTilt(maxDeg = 8) {
   const ref = useRef<HTMLDivElement | null>(null);
   const rx = useSpring(0, { stiffness: 220, damping: 26, mass: 0.6 });
   const ry = useSpring(0, { stiffness: 220, damping: 26, mass: 0.6 });
@@ -211,7 +211,7 @@ function PremiumName({ text, className = "" }: { text: string; className?: strin
 export default function Hero({ setActiveSection }: { setActiveSection: (section: string) => void }) {
   const reduceMotion = useReducedMotion();
   const spotlight = useMouseSpotlight();
-  const tilt = useTilt(10);
+  const tilt = useTilt(8);
 
   useVhVar();
 
@@ -237,7 +237,6 @@ export default function Hero({ setActiveSection }: { setActiveSection: (section:
   return (
     <section
       className="relative overflow-hidden [--nav:80px] sm:[--nav:80px] pt-[var(--nav)]"
-      // ✅ jangan paksa fixed-height; pakai minHeight biar mobile aman dan tidak “numpuk”
       style={{ minHeight: "calc(var(--vh, 1vh) * 100)" }}
     >
       {/* background */}
@@ -253,14 +252,13 @@ export default function Hero({ setActiveSection }: { setActiveSection: (section:
       <div className="pointer-events-none absolute -left-24 top-20 -z-10 h-[420px] w-[420px] rounded-full bg-cyan-400/10 blur-3xl" />
       <div className="pointer-events-none absolute -right-28 bottom-10 -z-10 h-[520px] w-[520px] rounded-full bg-violet-400/10 blur-3xl" />
 
-      {/* ✅ content wrapper: biarkan page yang scroll (no nested scroll) */}
       <div className="mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-8">
         <div
           className="
-            grid items-center gap-10
-            py-10 sm:py-14 lg:py-0
+            grid items-center gap-8
+            py-10 sm:py-12 lg:py-0
             lg:min-h-[calc(calc(var(--vh,1vh)*100)-var(--nav))]
-            lg:grid-cols-2 lg:gap-12
+            lg:grid-cols-2 lg:gap-10
           "
         >
           {/* left */}
@@ -375,13 +373,12 @@ export default function Hero({ setActiveSection }: { setActiveSection: (section:
             </div>
           </motion.div>
 
-          {/* right image */}
+          {/* ===== RIGHT: foto tanpa card background ===== */}
           <motion.div
             initial={reduceMotion ? undefined : { opacity: 0, y: 18, scale: 0.97 }}
             animate={reduceMotion ? undefined : { opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: 0.9, ease: EASE }}
-            // ✅ mobile: taruh gambar setelah teks, dan kasih ruang aman bawah
-            className="relative flex justify-center lg:justify-end pb-6 sm:pb-10 lg:pb-0"
+            className="relative flex justify-center lg:justify-end pb-4 sm:pb-8 lg:pb-0"
           >
             <motion.div
               ref={tilt.ref}
@@ -391,42 +388,32 @@ export default function Hero({ setActiveSection }: { setActiveSection: (section:
                   : { rotateX: tilt.rotateX, rotateY: tilt.rotateY, transformStyle: "preserve-3d" }
               }
               className="
-                relative w-full
-                max-w-[320px] sm:max-w-[380px] md:max-w-[420px] lg:max-w-[460px]
-                aspect-[4/3] sm:aspect-[3/4]
-                overflow-hidden rounded-3xl
-                border border-white/12 bg-white/5 backdrop-blur-xl shadow-2xl
+                relative
+                w-[240px] sm:w-[280px] md:w-[300px] lg:w-[320px]
+                aspect-[3/4]
+                overflow-hidden rounded-2xl
               "
             >
-              <div className="pointer-events-none absolute -inset-10 bg-cyan-400/10 blur-3xl" />
-              <div className="pointer-events-none absolute -inset-10 bg-violet-400/10 blur-3xl" />
+              {/* Foto tanpa card background — langsung Image fill */}
+              <Image
+                src="/images/img-2273.jpeg"
+                alt="Alexander Ollyvio"
+                fill
+                className="object-cover object-center"
+                sizes="(max-width: 640px) 240px, (max-width: 1024px) 280px, 320px"
+                priority
+              />
 
-              <div className="absolute inset-0" style={{ transform: "translateZ(24px)" }}>
-                <Image
-                  src="/images/img-2273.jpeg"
-                  alt="Landscape"
-                  fill
-                  className="object-contain object-center p-4 sm:p-5"
-                  sizes="(max-width: 640px) 92vw, (max-width: 1024px) 420px, 460px"
-                  priority
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent" />
-              </div>
+              {/* Gradient halus di bawah untuk teks label */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
 
-              <div className="pointer-events-none absolute inset-0 opacity-70">
-                <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-                <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-white/16 to-transparent" />
-              </div>
-
-              <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
-                <div className="rounded-full border border-white/14 bg-black/30 px-4 py-2 text-[11px] font-semibold tracking-[0.22em] uppercase text-white/70 backdrop-blur-md">
+              {/* Label lokasi */}
+              <div className="absolute bottom-3 left-3 right-3">
+                <div className="inline-flex items-center rounded-full border border-white/14 bg-black/30 px-3 py-1.5 text-[10px] font-semibold tracking-[0.20em] uppercase text-white/70 backdrop-blur-md">
                   Merbabu Peak • 2025
                 </div>
               </div>
             </motion.div>
-
-            {/* ✅ spacer kecil khusus mobile biar gak “nempel” sama section berikutnya */}
-            <div className="lg:hidden h-2" />
           </motion.div>
         </div>
       </div>
