@@ -175,38 +175,119 @@ function MagneticButton({
   );
 }
 
-function PremiumName({ text, className = "" }: { text: string; className?: string }) {
-  const reduceMotion = useReducedMotion();
-  const letters = Array.from(text);
+import type { FC } from "react";
 
-  const container = {
-    hidden: {},
-    show: { transition: { staggerChildren: 0.06, delayChildren: 0.5 } },
-  };
+interface GlitchTextProps {
+  children: string;
+  speed?: number;
+  enableShadows?: boolean;
+  enableOnHover?: boolean;
+  className?: string;
+}
 
-  const item = {
-    hidden: { y: 40, opacity: 0, filter: "blur(6px)", rotateX: 90 },
-    show: {
-      y: 0,
-      opacity: 1,
-      filter: "blur(0px)",
-      rotateX: 0,
-      transition: { type: "spring", stiffness: 140, damping: 18 },
-    },
-  };
+// Inject keyframes once globally
+const GLITCH_STYLE = `
+@keyframes glitch {
+  0%   { clip-path: inset(20% 0 50% 0); }
+  5%   { clip-path: inset(10% 0 60% 0); }
+  10%  { clip-path: inset(15% 0 55% 0); }
+  15%  { clip-path: inset(25% 0 35% 0); }
+  20%  { clip-path: inset(30% 0 40% 0); }
+  25%  { clip-path: inset(40% 0 20% 0); }
+  30%  { clip-path: inset(10% 0 60% 0); }
+  35%  { clip-path: inset(15% 0 55% 0); }
+  40%  { clip-path: inset(25% 0 35% 0); }
+  45%  { clip-path: inset(30% 0 40% 0); }
+  50%  { clip-path: inset(20% 0 50% 0); }
+  55%  { clip-path: inset(10% 0 60% 0); }
+  60%  { clip-path: inset(15% 0 55% 0); }
+  65%  { clip-path: inset(25% 0 35% 0); }
+  70%  { clip-path: inset(30% 0 40% 0); }
+  75%  { clip-path: inset(40% 0 20% 0); }
+  80%  { clip-path: inset(20% 0 50% 0); }
+  85%  { clip-path: inset(10% 0 60% 0); }
+  90%  { clip-path: inset(15% 0 55% 0); }
+  95%  { clip-path: inset(25% 0 35% 0); }
+  100% { clip-path: inset(30% 0 40% 0); }
+}
+.glitch-text {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  user-select: none;
+}
+.glitch-text::after,
+.glitch-text::before {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #070a12;
+}
+.glitch-text::after {
+  left: 10px;
+  text-shadow: -5px 0 red;
+  animation: glitch var(--after-duration, 3s) infinite linear alternate-reverse;
+}
+.glitch-text::before {
+  left: -10px;
+  text-shadow: 5px 0 cyan;
+  animation: glitch var(--before-duration, 2s) infinite linear alternate-reverse;
+}
+.glitch-text.no-shadows::after { text-shadow: none; }
+.glitch-text.no-shadows::before { text-shadow: none; }
+.glitch-text.on-hover::after,
+.glitch-text.on-hover::before {
+  animation: none;
+  opacity: 0;
+}
+.glitch-text.on-hover:hover::after,
+.glitch-text.on-hover:hover::before {
+  animation: glitch var(--after-duration, 3s) infinite linear alternate-reverse;
+  opacity: 1;
+}
+`;
 
-  if (reduceMotion) return <span className={className}>{text}</span>;
+let glitchStyleInjected = false;
+
+const GlitchText: FC<GlitchTextProps> = ({
+  children,
+  speed = 0.5,
+  enableShadows = true,
+  enableOnHover = false,
+  className = "",
+}) => {
+  useEffect(() => {
+    if (glitchStyleInjected) return;
+    const style = document.createElement("style");
+    style.textContent = GLITCH_STYLE;
+    document.head.appendChild(style);
+    glitchStyleInjected = true;
+  }, []);
+
+  const inlineStyle = {
+    "--after-duration": `${speed * 3}s`,
+    "--before-duration": `${speed * 2}s`,
+  } as React.CSSProperties;
+
+  const cls = [
+    "glitch-text",
+    !enableShadows ? "no-shadows" : "",
+    enableOnHover ? "on-hover" : "",
+    className,
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   return (
-    <motion.span variants={container} initial="hidden" animate="show" className="inline-block perspective-[1000px]">
-      {letters.map((char, i) => (
-        <motion.span key={i} variants={item} className={`inline-block will-change-transform ${className}`}>
-          {char === " " ? "\u00A0" : char}
-        </motion.span>
-      ))}
-    </motion.span>
+    <span style={inlineStyle} data-text={children} className={cls}>
+      {children}
+    </span>
   );
-}
+};
 
 export default function Hero({ setActiveSection }: { setActiveSection: (section: string) => void }) {
   const reduceMotion = useReducedMotion();
@@ -258,7 +339,7 @@ export default function Hero({ setActiveSection }: { setActiveSection: (section:
             grid items-center gap-8
             py-10 sm:py-12 lg:py-0
             lg:min-h-[calc(calc(var(--vh,1vh)*100)-var(--nav))]
-            lg:grid-cols-2 lg:gap-10
+            lg:grid-cols-[1fr_auto] lg:gap-10
           "
         >
           {/* left */}
@@ -277,12 +358,23 @@ export default function Hero({ setActiveSection }: { setActiveSection: (section:
             </div>
 
             {/* title */}
-            <h1 className="text-balance font-semibold tracking-tight text-white leading-[0.98] text-[clamp(34px,9vw,72px)]">
-              Alexander{" "}
-              <PremiumName
-                text="Ollyvio"
-                className="bg-gradient-to-r from-cyan-300 via-sky-300 to-violet-300 bg-clip-text text-transparent"
-              />
+            <h1 className="font-semibold tracking-tight text-white leading-[0.98] text-[clamp(34px,9vw,72px)]">
+              <GlitchText
+                speed={1}
+                enableShadows
+                enableOnHover={false}
+                className="bg-gradient-to-r from-white via-white to-white/80 bg-clip-text text-transparent font-semibold tracking-tight leading-[0.98] text-[clamp(34px,9vw,72px)]"
+              >
+                Alexander
+              </GlitchText>{" "}
+              <GlitchText
+                speed={1.4}
+                enableShadows
+                enableOnHover={false}
+                className="bg-gradient-to-r from-cyan-300 via-sky-300 to-violet-300 bg-clip-text text-transparent font-semibold tracking-tight leading-[0.98] text-[clamp(34px,9vw,72px)]"
+              >
+                Ollyvio
+              </GlitchText>
             </h1>
 
             <p className="max-w-[56ch] text-[13px] leading-relaxed text-white/70 sm:text-lg">
@@ -378,7 +470,7 @@ export default function Hero({ setActiveSection }: { setActiveSection: (section:
             initial={reduceMotion ? undefined : { opacity: 0, y: 18, scale: 0.97 }}
             animate={reduceMotion ? undefined : { opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: 0.9, ease: EASE }}
-            className="relative flex justify-center lg:justify-end pb-4 sm:pb-8 lg:pb-0"
+            className="relative flex items-center justify-center lg:justify-end pb-4 sm:pb-8 lg:pb-0"
           >
             <motion.div
               ref={tilt.ref}
@@ -389,26 +481,26 @@ export default function Hero({ setActiveSection }: { setActiveSection: (section:
               }
               className="
                 relative
-                w-[240px] sm:w-[280px] md:w-[300px] lg:w-[320px]
+                w-[320px] sm:w-[380px] md:w-[400px] lg:w-[min(420px,42vw)]
                 aspect-[3/4]
-                overflow-hidden rounded-2xl
+                overflow-hidden rounded-3xl
               "
             >
-              {/* Foto tanpa card background — langsung Image fill */}
+              {/* Foto langsung tanpa card background */}
               <Image
                 src="/images/img-2273.jpeg"
                 alt="Alexander Ollyvio"
                 fill
                 className="object-cover object-center"
-                sizes="(max-width: 640px) 240px, (max-width: 1024px) 280px, 320px"
+                sizes="(max-width: 640px) 320px, (max-width: 1024px) 380px, 420px"
                 priority
               />
 
               {/* Gradient halus di bawah untuk teks label */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-transparent" />
 
               {/* Label lokasi */}
-              <div className="absolute bottom-3 left-3 right-3">
+              <div className="absolute bottom-4 left-4 right-4">
                 <div className="inline-flex items-center rounded-full border border-white/14 bg-black/30 px-3 py-1.5 text-[10px] font-semibold tracking-[0.20em] uppercase text-white/70 backdrop-blur-md">
                   Merbabu Peak • 2025
                 </div>
