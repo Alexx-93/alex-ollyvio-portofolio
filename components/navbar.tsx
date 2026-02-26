@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Menu, X } from "lucide-react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion, useSpring, useTransform } from "framer-motion";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
+const SPRING = { type: "spring", stiffness: 500, damping: 38 } as const;
 
 type NavbarProps = {
   activeSection: string;
@@ -13,51 +14,55 @@ type NavbarProps = {
 
 export default function Navbar({ activeSection, setActiveSection }: NavbarProps) {
   const reduceMotion = useReducedMotion();
-
   const [isOpen, setIsOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
 
-  const navItems = useMemo(
-    () => [
-      { label: "About", id: "about" },
-      { label: "Journey", id: "experience" },
-      { label: "Certificates", id: "certificates" },
-      { label: "Hobbies", id: "hobbies" },
-      { label: "Tech Stack", id: "tech-stack" },
-      { label: "Contact", id: "contact" },
-    ],
-    []
-  );
+  // spring-driven progress bar
+  const rawProgress = useSpring(0, { stiffness: 80, damping: 20, mass: 0.4 });
+  const scaleX = useTransform(rawProgress, [0, 1], [0, 1]);
+
+  const navItems = useMemo(() => [
+    { label: "About", id: "about" },
+    { label: "Journey", id: "experience" },
+    { label: "Certificates", id: "certificates" },
+    { label: "Hobbies", id: "hobbies" },
+    { label: "Tech Stack", id: "tech-stack" },
+    { label: "Contact", id: "contact" },
+  ], []);
 
   useEffect(() => {
-    const onScroll = () => setIsScrolled(window.scrollY > 10);
+    const onScroll = () => {
+      const sy = window.scrollY;
+      const docH = document.documentElement.scrollHeight - window.innerHeight;
+      const p = docH > 0 ? sy / docH : 0;
+      setScrolled(sy > 12);
+      setProgress(p);
+      rawProgress.set(p);
+    };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  }, [rawProgress]);
 
   useEffect(() => {
-    const onKeyDown = (e: KeyboardEvent) => {
+    const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setIsOpen(false);
-
-      const isCmdK = (e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k";
-      if (isCmdK) {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
         e.preventDefault();
-        setIsOpen((v) => !v);
+        setIsOpen(v => !v);
       }
     };
-
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
   }, []);
 
   useEffect(() => {
     if (!isOpen) return;
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = prev;
-    };
+    return () => { document.body.style.overflow = prev; };
   }, [isOpen]);
 
   const goTo = (id: string) => {
@@ -68,282 +73,358 @@ export default function Navbar({ activeSection, setActiveSection }: NavbarProps)
 
   return (
     <>
+      {/* ── Main Nav ── */}
       <motion.nav
-        initial={reduceMotion ? undefined : { y: -12, opacity: 0 }}
+        initial={reduceMotion ? undefined : { y: -28, opacity: 0 }}
         animate={reduceMotion ? undefined : { y: 0, opacity: 1 }}
-        transition={{ duration: 0.6, ease: EASE }}
+        transition={{ duration: 0.8, ease: EASE }}
         className="fixed inset-x-0 top-0 z-[120]"
       >
-        <div className="relative">
-          {/* top glow line */}
+        {/* ── Scroll progress bar (spring-smoothed) ── */}
+        <motion.div
+          className="absolute inset-x-0 top-0 z-10 h-[2px] origin-left bg-gradient-to-r from-cyan-400 via-sky-300 to-violet-400"
+          style={reduceMotion ? { scaleX: progress } : { scaleX }}
+        />
+
+        {/* ── Nav body ── */}
+        <motion.div
+          animate={reduceMotion ? undefined : {
+            backgroundColor: scrolled ? "rgba(7,10,18,0.85)" : "rgba(7,10,18,0.25)",
+            borderColor: scrolled ? "rgba(255,255,255,0.09)" : "rgba(255,255,255,0.05)",
+          }}
+          transition={{ duration: 0.45, ease: EASE }}
+          className="relative border-b backdrop-blur-xl"
+        >
+          {/* bottom haze */}
           <motion.div
-            className="pointer-events-none absolute inset-x-0 -top-px h-px bg-gradient-to-r from-transparent via-cyan-300/35 to-transparent"
-            animate={reduceMotion ? undefined : { opacity: [0.25, 0.55, 0.25] }}
-            transition={reduceMotion ? undefined : { duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
+            className="pointer-events-none absolute inset-x-0 -bottom-10 h-10 bg-gradient-to-b from-cyan-400/8 to-transparent blur-xl"
+            animate={reduceMotion ? undefined : { opacity: scrolled ? 1 : 0.5 }}
+            transition={{ duration: 0.4 }}
           />
 
-          <motion.div
-            animate={
-              reduceMotion
-                ? undefined
-                : {
-                  backgroundColor: isScrolled ? "rgba(7,10,18,0.70)" : "rgba(7,10,18,0.40)",
-                  borderColor: isScrolled ? "rgba(255,255,255,0.10)" : "rgba(255,255,255,0.08)",
-                }
-            }
-            transition={{ duration: 0.35, ease: EASE }}
-            className={["relative border-b backdrop-blur-md", isScrolled ? "backdrop-blur-xl" : "backdrop-blur-md"].join(
-              " "
-            )}
-            style={reduceMotion ? undefined : { willChange: "background-color, border-color" }}
-          >
-            {/* soft haze under navbar */}
-            <motion.div
-              className="pointer-events-none absolute inset-x-0 -bottom-10 h-10 bg-gradient-to-b from-cyan-400/10 via-violet-400/6 to-transparent blur-2xl"
-              animate={reduceMotion ? undefined : { opacity: isScrolled ? 0.85 : 0.6 }}
-              transition={{ duration: 0.35, ease: EASE }}
-            />
-
-            {/* subtle moving shine */}
-            {!reduceMotion && (
-              <div className="pointer-events-none absolute inset-0 overflow-hidden">
-                <motion.div
-                  aria-hidden
-                  className="absolute -left-1/3 top-0 h-full w-1/3 bg-gradient-to-r from-transparent via-white/8 to-transparent"
-                  animate={{ x: ["-40%", "340%"] }}
-                  transition={{ duration: 7.5, repeat: Infinity, ease: "linear" }}
-                />
-              </div>
-            )}
-
-            {/* micro noise (modern feel) */}
-            <div className="pointer-events-none absolute inset-0 opacity-[0.08] [background-image:radial-gradient(rgba(255,255,255,0.12)_1px,transparent_1px)] [background-size:18px_18px]" />
-
-            <div className="mx-auto flex h-16 max-w-[1200px] items-center justify-between px-4 sm:h-20 sm:px-6 lg:px-8">
-              {/* Brand */}
-              <motion.button
-                onClick={() => goTo("top")}
-                className="group relative text-left"
-                whileHover={reduceMotion ? undefined : { y: -1 }}
-                whileTap={reduceMotion ? undefined : { scale: 0.98 }}
-                aria-label="Go to top"
-              >
-                {/* dot pulse */}
-                <motion.span
-                  className="pointer-events-none absolute -left-3 top-2 hidden h-1.5 w-1.5 rounded-full bg-cyan-300/80 shadow-[0_0_14px_rgba(34,211,238,0.55)] sm:block"
-                  animate={reduceMotion ? undefined : { scale: [1, 1.6, 1], opacity: [0.7, 1, 0.7] }}
-                  transition={reduceMotion ? undefined : { duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
-                />
-
-                <div className="text-xs font-semibold tracking-tight sm:text-sm">
-                  <span className="text-white/90 group-hover:text-white transition-colors">Alexander</span>{" "}
-                  <span className="relative bg-gradient-to-r from-cyan-300 via-sky-300 to-violet-300 bg-clip-text text-transparent">
-                    Ollyvio
-                    {!reduceMotion && (
-                      <motion.span
-                        aria-hidden
-                        className="pointer-events-none absolute -bottom-1 left-0 h-[2px] w-full bg-gradient-to-r from-cyan-300/0 via-cyan-300/55 to-violet-300/0"
-                        animate={{ opacity: [0.0, 1, 0.0], x: ["-20%", "20%", "-20%"] }}
-                        transition={{ duration: 3.6, repeat: Infinity, ease: "easeInOut" }}
-                      />
-                    )}
-                  </span>
-                </div>
-
-                <div className="text-[9px] font-semibold tracking-[0.22em] uppercase text-white/55 transition-colors group-hover:text-white/70 sm:text-[11px]">
-                  PORTFOLIO
-                </div>
-              </motion.button>
-
-              {/* Desktop */}
-              <div className="hidden md:flex items-center">
-                <motion.div
-                  className="relative flex items-center gap-1 rounded-full border border-white/10 bg-white/[0.04] px-2 py-1.5 backdrop-blur-md"
-                  initial={reduceMotion ? undefined : { opacity: 0, y: -6 }}
-                  animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
-                  transition={{ delay: 0.15, duration: 0.45, ease: EASE }}
-                >
-                  <span className="pointer-events-none absolute inset-0 rounded-full ring-1 ring-inset ring-white/5" />
-
-                  {!reduceMotion && (
-                    <motion.div
-                      aria-hidden
-                      className="pointer-events-none absolute -inset-[1px] rounded-full bg-[linear-gradient(90deg,rgba(34,211,238,0.15),rgba(167,139,250,0.12),rgba(34,211,238,0.15))] opacity-35 blur-xl"
-                      animate={{ opacity: [0.22, 0.45, 0.22] }}
-                      transition={{ duration: 4.2, repeat: Infinity, ease: "easeInOut" }}
-                    />
-                  )}
-
-                  {navItems.map((item, idx) => {
-                    const active = activeSection === item.id;
-
-                    return (
-                      <motion.button
-                        key={item.id}
-                        onClick={() => goTo(item.id)}
-                        initial={reduceMotion ? undefined : { opacity: 0, y: -6 }}
-                        animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
-                        transition={{ delay: 0.06 * idx, duration: 0.35, ease: EASE }}
-                        whileHover={reduceMotion ? undefined : { y: -1 }}
-                        whileTap={reduceMotion ? undefined : { scale: 0.98 }}
-                        className={[
-                          "group relative rounded-full px-4 py-2 text-sm font-semibold transition-colors duration-300",
-                          active ? "text-white" : "text-white/70 hover:text-white",
-                        ].join(" ")}
-                      >
-                        {active && (
-                          <motion.span
-                            layoutId="nav-pill"
-                            className="pointer-events-none absolute inset-0 rounded-full bg-white/8 ring-1 ring-inset ring-white/10"
-                            transition={{ type: "spring", stiffness: 520, damping: 40 }}
-                          />
-                        )}
-
-                        <span className="pointer-events-none absolute inset-0 rounded-full opacity-0 transition-opacity duration-300 group-hover:opacity-100 bg-white/[0.06]" />
-
-                        <span className="relative">{item.label}</span>
-
-                        <span
-                          className={[
-                            "pointer-events-none absolute left-1/2 -bottom-[6px] h-[2px] w-10 -translate-x-1/2 rounded-full",
-                            "bg-gradient-to-r from-cyan-300/0 via-cyan-300/60 to-violet-300/0",
-                            active ? "opacity-100" : "opacity-0 group-hover:opacity-60",
-                          ].join(" ")}
-                        />
-                        {active && (
-                          <motion.span
-                            layoutId="nav-dot"
-                            className="pointer-events-none absolute -bottom-[10px] left-1/2 h-1.5 w-1.5 -translate-x-1/2 rounded-full bg-cyan-300/80 shadow-[0_0_14px_rgba(34,211,238,0.55)]"
-                            transition={{ type: "spring", stiffness: 520, damping: 40 }}
-                          />
-                        )}
-                      </motion.button>
-                    );
-                  })}
-                </motion.div>
-              </div>
-
-              {/* Mobile */}
-              <div className="flex items-center gap-2 md:hidden">
-                <motion.button
-                  onClick={() => setIsOpen((v) => !v)}
-                  whileHover={reduceMotion ? undefined : { scale: 1.03 }}
-                  whileTap={reduceMotion ? undefined : { scale: 0.96 }}
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.06]
-                           text-white/80 backdrop-blur-md transition-colors hover:text-white hover:bg-white/10"
-                  aria-label={isOpen ? "Close menu" : "Open menu"}
-                >
-                  <motion.span
-                    key={isOpen ? "close" : "menu"}
-                    initial={reduceMotion ? undefined : { rotate: -12, opacity: 0, scale: 0.9 }}
-                    animate={reduceMotion ? undefined : { rotate: 0, opacity: 1, scale: 1 }}
-                    exit={reduceMotion ? undefined : { rotate: 12, opacity: 0, scale: 0.9 }}
-                    transition={{ duration: 0.18, ease: EASE }}
-                    className="inline-flex"
-                  >
-                    {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-                  </motion.span>
-                </motion.button>
-              </div>
+          {/* animated shimmer sweep */}
+          {!reduceMotion && (
+            <div className="pointer-events-none absolute inset-0 overflow-hidden opacity-50">
+              <motion.div
+                aria-hidden
+                className="absolute top-0 -left-[40%] h-full w-[30%] bg-gradient-to-r from-transparent via-white/6 to-transparent skew-x-[-20deg]"
+                animate={{ x: ["0%", "500%"] }}
+                transition={{ duration: 9, repeat: Infinity, ease: "linear", repeatDelay: 3 }}
+              />
             </div>
-          </motion.div>
-        </div>
+          )}
+
+          <div className="mx-auto flex h-16 max-w-[1200px] items-center justify-between px-4 sm:h-[72px] sm:px-6 lg:px-8">
+
+            {/* ── Brand ── */}
+            <motion.button
+              onClick={() => goTo("top")}
+              whileHover={reduceMotion ? undefined : { y: -1 }}
+              whileTap={reduceMotion ? undefined : { scale: 0.96 }}
+              aria-label="Go to top"
+              className="group relative text-left"
+            >
+              {/* pulsing dot */}
+              <motion.span
+                className="pointer-events-none absolute -left-4 top-[6px] hidden h-2 w-2 rounded-full bg-cyan-300 sm:block"
+                animate={reduceMotion ? undefined : {
+                  scale: [1, 1.8, 1],
+                  opacity: [0.6, 1, 0.6],
+                  boxShadow: [
+                    "0 0 8px rgba(34,211,238,0.4)",
+                    "0 0 18px rgba(34,211,238,0.85)",
+                    "0 0 8px rgba(34,211,238,0.4)",
+                  ],
+                }}
+                transition={{ duration: 2.6, repeat: Infinity, ease: "easeInOut" }}
+              />
+
+              {/* second outer ring pulse */}
+              <motion.span
+                className="pointer-events-none absolute -left-4 top-[6px] hidden h-2 w-2 rounded-full border border-cyan-300/40 sm:block"
+                animate={reduceMotion ? undefined : { scale: [1, 2.8], opacity: [0.5, 0] }}
+                transition={{ duration: 2.6, repeat: Infinity, ease: "easeOut" }}
+              />
+
+              <motion.div
+                className="text-[13px] font-semibold tracking-tight sm:text-sm"
+                initial={reduceMotion ? undefined : { opacity: 0, x: -8 }}
+                animate={reduceMotion ? undefined : { opacity: 1, x: 0 }}
+                transition={{ delay: 0.3, duration: 0.5, ease: EASE }}
+              >
+                <span className="text-white/85 transition-colors group-hover:text-white">Alexander</span>{" "}
+                <motion.span
+                  className="bg-gradient-to-r from-cyan-300 via-sky-300 to-violet-300 bg-clip-text text-transparent"
+                  animate={reduceMotion ? undefined : {
+                    backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
+                  }}
+                  style={{ backgroundSize: "200% 200%" }}
+                  transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
+                >
+                  Ollyvio
+                </motion.span>
+              </motion.div>
+
+              <motion.div
+                className="text-[9px] font-bold tracking-[0.28em] uppercase text-white/40 group-hover:text-white/60 transition-colors sm:text-[10px]"
+                initial={reduceMotion ? undefined : { opacity: 0 }}
+                animate={reduceMotion ? undefined : { opacity: 1 }}
+                transition={{ delay: 0.5, duration: 0.4 }}
+              >
+                Portfolio
+              </motion.div>
+            </motion.button>
+
+            {/* ── Desktop pill nav ── */}
+            <div className="hidden md:flex items-center">
+              <motion.div
+                initial={reduceMotion ? undefined : { opacity: 0, y: -8, scale: 0.96 }}
+                animate={reduceMotion ? undefined : { opacity: 1, y: 0, scale: 1 }}
+                transition={{ delay: 0.2, duration: 0.55, ease: EASE }}
+                className="relative flex items-center gap-0.5 rounded-full border border-white/10 bg-white/[0.04] p-1 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.07)]"
+                onMouseLeave={() => setHoveredId(null)}
+              >
+                {/* ambient inner glow */}
+                {!reduceMotion && (
+                  <motion.div
+                    aria-hidden
+                    className="pointer-events-none absolute inset-0 rounded-full opacity-0"
+                    animate={{ opacity: hoveredId ? 0.5 : 0 }}
+                    transition={{ duration: 0.3 }}
+                    style={{ background: "radial-gradient(circle at 50% 50%, rgba(34,211,238,0.08), transparent 70%)" }}
+                  />
+                )}
+
+                {navItems.map((item, idx) => {
+                  const active = activeSection === item.id;
+                  const hovered = hoveredId === item.id;
+
+                  return (
+                    <motion.button
+                      key={item.id}
+                      onClick={() => goTo(item.id)}
+                      onHoverStart={() => setHoveredId(item.id)}
+                      initial={reduceMotion ? undefined : { opacity: 0, y: -6 }}
+                      animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+                      transition={{ delay: 0.06 * idx + 0.25, duration: 0.32, ease: EASE }}
+                      whileHover={reduceMotion ? undefined : { y: -1.5 }}
+                      whileTap={reduceMotion ? undefined : { scale: 0.96, y: 0 }}
+                      className={[
+                        "relative rounded-full px-3.5 py-2 text-[13px] font-semibold transition-colors duration-200 lg:px-4",
+                        active ? "text-white" : "text-white/52 hover:text-white/90",
+                      ].join(" ")}
+                    >
+                      {/* hover bg */}
+                      <AnimatePresence>
+                        {hovered && !active && (
+                          <motion.span
+                            layoutId="desk-hover"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.18 }}
+                            className="absolute inset-0 rounded-full bg-white/[0.06]"
+                          />
+                        )}
+                      </AnimatePresence>
+
+                      {/* active pill */}
+                      {active && (
+                        <motion.span
+                          layoutId="desk-pill"
+                          className="absolute inset-0 rounded-full bg-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.14),0_0_16px_rgba(34,211,238,0.06)]"
+                          transition={SPRING}
+                        />
+                      )}
+
+                      <span className="relative">{item.label}</span>
+
+                      {/* active glow dot */}
+                      {active && (
+                        <motion.span
+                          layoutId="desk-dot"
+                          className="absolute -bottom-[9px] left-1/2 h-1 w-1 -translate-x-1/2 rounded-full bg-cyan-300"
+                          animate={reduceMotion ? undefined : {
+                            boxShadow: [
+                              "0 0 6px rgba(34,211,238,0.6)",
+                              "0 0 14px rgba(34,211,238,1)",
+                              "0 0 6px rgba(34,211,238,0.6)",
+                            ],
+                          }}
+                          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut", ...SPRING }}
+                        />
+                      )}
+                    </motion.button>
+                  );
+                })}
+              </motion.div>
+            </div>
+
+            {/* ── Mobile Hamburger ── */}
+            <motion.button
+              onClick={() => setIsOpen(v => !v)}
+              whileHover={reduceMotion ? undefined : { scale: 1.06 }}
+              whileTap={reduceMotion ? undefined : { scale: 0.93 }}
+              initial={reduceMotion ? undefined : { opacity: 0, rotate: -10 }}
+              animate={reduceMotion ? undefined : { opacity: 1, rotate: 0 }}
+              transition={{ delay: 0.4, duration: 0.4, ease: EASE }}
+              className="md:hidden inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/12 bg-white/[0.06] text-white/70 backdrop-blur-md transition-colors hover:bg-white/10 hover:text-white"
+              aria-label={isOpen ? "Close menu" : "Open menu"}
+            >
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.span
+                  key={isOpen ? "x" : "menu"}
+                  initial={reduceMotion ? undefined : { rotate: -20, opacity: 0, scale: 0.8 }}
+                  animate={reduceMotion ? undefined : { rotate: 0, opacity: 1, scale: 1 }}
+                  exit={reduceMotion ? undefined : { rotate: 20, opacity: 0, scale: 0.8 }}
+                  transition={{ duration: 0.18, ease: EASE }}
+                  className="inline-flex"
+                >
+                  {isOpen ? <X className="h-[18px] w-[18px]" /> : <Menu className="h-[18px] w-[18px]" />}
+                </motion.span>
+              </AnimatePresence>
+            </motion.button>
+          </div>
+        </motion.div>
       </motion.nav>
 
-      {/* Mobile Drawer */}
+      {/* ── Mobile Drawer ── */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
             className="fixed inset-0 z-[119] md:hidden"
-            initial={reduceMotion ? undefined : { opacity: 0 }}
-            animate={reduceMotion ? undefined : { opacity: 1 }}
-            exit={reduceMotion ? undefined : { opacity: 0 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.22 }}
           >
+            {/* backdrop with blur */}
             <motion.button
-              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+              className="absolute inset-0 bg-[#070a12]/80 backdrop-blur-sm"
               onClick={() => setIsOpen(false)}
               aria-label="Close menu"
-              initial={reduceMotion ? undefined : { opacity: 0 }}
-              animate={reduceMotion ? undefined : { opacity: 1 }}
-              exit={reduceMotion ? undefined : { opacity: 0 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.22 }}
             />
 
+            {/* panel */}
             <motion.div
-              initial={reduceMotion ? undefined : { x: 28, opacity: 0 }}
+              initial={reduceMotion ? undefined : { x: "100%", opacity: 0 }}
               animate={reduceMotion ? undefined : { x: 0, opacity: 1 }}
-              exit={reduceMotion ? undefined : { x: 28, opacity: 0 }}
-              transition={{ duration: 0.3, ease: EASE }}
-              className="absolute right-0 top-0 h-full w-[86%] max-w-sm border-l border-white/10 bg-[#070a12]/80 backdrop-blur-xl"
+              exit={reduceMotion ? undefined : { x: "100%", opacity: 0 }}
+              transition={{ duration: 0.35, ease: EASE }}
+              className="absolute right-0 top-0 h-full w-[80%] max-w-[300px] flex flex-col border-l border-white/10 bg-[#060812]/92 backdrop-blur-2xl"
             >
-              <div className="pointer-events-none absolute inset-y-0 left-0 w-px bg-gradient-to-b from-cyan-300/25 via-white/10 to-violet-300/25" />
-              <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/15 to-transparent" />
+              {/* edge accents */}
+              <div className="pointer-events-none absolute inset-y-0 left-0 w-px bg-gradient-to-b from-cyan-300/35 via-white/8 to-violet-300/25" />
+              <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
 
-              <div className="flex items-center justify-between px-6 pt-6">
-                <div>
-                  <div className="text-sm font-semibold text-white">Menu</div>
-                  <div className="mt-1 text-[11px] font-semibold tracking-[0.22em] uppercase text-white/55">
-                    Sections
-                  </div>
-                </div>
+              {/* ambient glow */}
+              <motion.div
+                className="pointer-events-none absolute -top-20 -right-20 h-40 w-40 rounded-full bg-cyan-400/10 blur-3xl"
+                animate={reduceMotion ? undefined : { opacity: [0.5, 1, 0.5] }}
+                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+              />
+              <motion.div
+                className="pointer-events-none absolute -bottom-20 -left-10 h-40 w-40 rounded-full bg-violet-400/10 blur-3xl"
+                animate={reduceMotion ? undefined : { opacity: [0.4, 0.9, 0.4] }}
+                transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+              />
+
+              {/* header */}
+              <div className="flex items-center justify-between px-5 pt-6 pb-4 border-b border-white/8">
+                <motion.div
+                  initial={reduceMotion ? undefined : { opacity: 0, x: -10 }}
+                  animate={reduceMotion ? undefined : { opacity: 1, x: 0 }}
+                  transition={{ delay: 0.1, duration: 0.3, ease: EASE }}
+                >
+                  <p className="text-sm font-semibold text-white">Navigation</p>
+                  <p className="text-[10px] font-bold tracking-[0.24em] uppercase text-white/35 mt-0.5">Sections</p>
+                </motion.div>
 
                 <motion.button
                   onClick={() => setIsOpen(false)}
-                  whileHover={reduceMotion ? undefined : { rotate: 8 }}
-                  whileTap={reduceMotion ? undefined : { scale: 0.96 }}
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5
-                             text-white/80 transition-colors hover:text-white hover:bg-white/10"
+                  whileHover={reduceMotion ? undefined : { rotate: 90, scale: 1.08 }}
+                  whileTap={reduceMotion ? undefined : { scale: 0.92 }}
+                  transition={{ duration: 0.22 }}
+                  initial={reduceMotion ? undefined : { opacity: 0, scale: 0.8 }}
+                  animate={reduceMotion ? undefined : { opacity: 1, scale: 1 }}
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/60 transition-colors hover:bg-white/10 hover:text-white"
                   aria-label="Close"
                 >
-                  <X className="h-5 w-5" />
+                  <X className="h-4 w-4" />
                 </motion.button>
               </div>
 
-              <div className="px-6 pb-10 pt-6">
-                <div className="space-y-2">
-                  {navItems.map((item, idx) => {
-                    const active = activeSection === item.id;
+              {/* nav items */}
+              <nav className="flex-1 overflow-y-auto px-4 py-4 space-y-1.5">
+                {navItems.map((item, idx) => {
+                  const active = activeSection === item.id;
+                  return (
+                    <motion.button
+                      key={item.id}
+                      onClick={() => goTo(item.id)}
+                      initial={reduceMotion ? undefined : { opacity: 0, x: 24 }}
+                      animate={reduceMotion ? undefined : { opacity: 1, x: 0 }}
+                      exit={reduceMotion ? undefined : { opacity: 0, x: 16 }}
+                      transition={{ delay: 0.05 * idx + 0.08, duration: 0.3, ease: EASE }}
+                      whileHover={reduceMotion ? undefined : { x: 3, scale: 1.01 }}
+                      whileTap={reduceMotion ? undefined : { scale: 0.97 }}
+                      className={[
+                        "group relative w-full overflow-hidden flex items-center justify-between rounded-2xl px-4 py-3.5 text-left text-[13px] font-semibold transition-all duration-200",
+                        active
+                          ? "bg-white/10 border border-white/15 text-white"
+                          : "bg-white/[0.03] border border-white/7 text-white/58 hover:text-white hover:bg-white/7 hover:border-white/12",
+                      ].join(" ")}
+                    >
+                      {/* sweep shimmer on hover */}
+                      {!reduceMotion && (
+                        <motion.span
+                          aria-hidden
+                          className="pointer-events-none absolute inset-y-0 -left-full w-full bg-gradient-to-r from-transparent via-white/8 to-transparent opacity-0 group-hover:opacity-100"
+                          animate={{ x: ["-100%", "200%"] }}
+                          transition={{ duration: 0.85, ease: "easeInOut", repeat: Infinity, repeatDelay: 1.2 }}
+                        />
+                      )}
 
-                    return (
-                      <motion.button
-                        key={item.id}
-                        onClick={() => goTo(item.id)}
-                        initial={reduceMotion ? undefined : { opacity: 0, y: 12 }}
-                        animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
-                        exit={reduceMotion ? undefined : { opacity: 0, y: 10 }}
-                        transition={{ delay: 0.06 * idx, duration: 0.3, ease: EASE }}
-                        whileHover={reduceMotion ? undefined : { x: 2 }}
-                        whileTap={reduceMotion ? undefined : { scale: 0.98 }}
-                        className={[
-                          "group relative w-full overflow-hidden rounded-2xl px-4 py-3 text-left text-sm font-semibold transition-all duration-300",
-                          active
-                            ? "border border-white/14 bg-white/10 text-white"
-                            : "border border-white/10 bg-white/[0.04] text-white/75 hover:text-white hover:bg-white/8",
-                        ].join(" ")}
-                      >
-                        {!reduceMotion && (
-                          <motion.span
-                            aria-hidden
-                            className="pointer-events-none absolute inset-y-0 -left-1/2 w-1/2 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100"
-                            animate={{ x: ["-20%", "240%"] }}
-                            transition={{ duration: 0.9, ease: "easeInOut", repeat: Infinity, repeatDelay: 1.4 }}
-                          />
-                        )}
+                      <span className="relative">{item.label}</span>
 
-                        <div className="relative flex items-center justify-between">
-                          <span>{item.label}</span>
-                          {active && (
-                            <motion.span
-                              layoutId="mobile-dot"
-                              className="h-1.5 w-1.5 rounded-full bg-cyan-300 shadow-[0_0_14px_rgba(34,211,238,0.55)]"
-                              transition={{ type: "spring", stiffness: 520, damping: 40 }}
-                            />
-                          )}
-                        </div>
-                      </motion.button>
-                    );
-                  })}
-                </div>
-              </div>
+                      {active ? (
+                        <motion.span
+                          layoutId="mob-dot"
+                          className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-cyan-300"
+                          animate={reduceMotion ? undefined : {
+                            boxShadow: [
+                              "0 0 6px rgba(34,211,238,0.5)",
+                              "0 0 14px rgba(34,211,238,1)",
+                              "0 0 6px rgba(34,211,238,0.5)",
+                            ],
+                          }}
+                          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                        />
+                      ) : (
+                        <motion.span
+                          className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-white/15 opacity-0 group-hover:opacity-100 transition-opacity"
+                        />
+                      )}
+                    </motion.button>
+                  );
+                })}
+              </nav>
+
+              {/* footer */}
+              <motion.div
+                className="px-5 py-5 border-t border-white/8"
+                initial={reduceMotion ? undefined : { opacity: 0 }}
+                animate={reduceMotion ? undefined : { opacity: 1 }}
+                transition={{ delay: 0.4, duration: 0.3 }}
+              >
+                <p className="text-[9px] font-bold tracking-[0.24em] uppercase text-white/25">
+                  Alexander Ollyvio • Portfolio
+                </p>
+              </motion.div>
             </motion.div>
           </motion.div>
         )}
