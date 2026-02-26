@@ -4,6 +4,7 @@ import Image from "next/image";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowRight, Download, Github, Linkedin, Mail } from "lucide-react";
 import { motion, useReducedMotion, useSpring } from "framer-motion";
+import DecryptedText from "./DecryptedText";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -175,7 +176,7 @@ function MagneticButton({
   );
 }
 
-import type { FC } from "react";
+import type { FC, CSSProperties } from "react";
 
 interface GlitchTextProps {
   children: string;
@@ -185,73 +186,12 @@ interface GlitchTextProps {
   className?: string;
 }
 
-// Inject keyframes once globally
-const GLITCH_STYLE = `
-@keyframes glitch {
-  0%   { clip-path: inset(20% 0 50% 0); }
-  5%   { clip-path: inset(10% 0 60% 0); }
-  10%  { clip-path: inset(15% 0 55% 0); }
-  15%  { clip-path: inset(25% 0 35% 0); }
-  20%  { clip-path: inset(30% 0 40% 0); }
-  25%  { clip-path: inset(40% 0 20% 0); }
-  30%  { clip-path: inset(10% 0 60% 0); }
-  35%  { clip-path: inset(15% 0 55% 0); }
-  40%  { clip-path: inset(25% 0 35% 0); }
-  45%  { clip-path: inset(30% 0 40% 0); }
-  50%  { clip-path: inset(20% 0 50% 0); }
-  55%  { clip-path: inset(10% 0 60% 0); }
-  60%  { clip-path: inset(15% 0 55% 0); }
-  65%  { clip-path: inset(25% 0 35% 0); }
-  70%  { clip-path: inset(30% 0 40% 0); }
-  75%  { clip-path: inset(40% 0 20% 0); }
-  80%  { clip-path: inset(20% 0 50% 0); }
-  85%  { clip-path: inset(10% 0 60% 0); }
-  90%  { clip-path: inset(15% 0 55% 0); }
-  95%  { clip-path: inset(25% 0 35% 0); }
-  100% { clip-path: inset(30% 0 40% 0); }
+interface CustomCSSProperties extends CSSProperties {
+  "--after-duration": string;
+  "--before-duration": string;
+  "--after-shadow": string;
+  "--before-shadow": string;
 }
-.glitch-text {
-  position: relative;
-  display: inline-block;
-  cursor: pointer;
-  user-select: none;
-}
-.glitch-text::after,
-.glitch-text::before {
-  content: attr(data-text);
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  background: #070a12;
-}
-.glitch-text::after {
-  left: 10px;
-  text-shadow: -5px 0 red;
-  animation: glitch var(--after-duration, 3s) infinite linear alternate-reverse;
-}
-.glitch-text::before {
-  left: -10px;
-  text-shadow: 5px 0 cyan;
-  animation: glitch var(--before-duration, 2s) infinite linear alternate-reverse;
-}
-.glitch-text.no-shadows::after { text-shadow: none; }
-.glitch-text.no-shadows::before { text-shadow: none; }
-.glitch-text.on-hover::after,
-.glitch-text.on-hover::before {
-  animation: none;
-  opacity: 0;
-}
-.glitch-text.on-hover:hover::after,
-.glitch-text.on-hover:hover::before {
-  animation: glitch var(--after-duration, 3s) infinite linear alternate-reverse;
-  opacity: 1;
-}
-`;
-
-let glitchStyleInjected = false;
 
 const GlitchText: FC<GlitchTextProps> = ({
   children,
@@ -260,30 +200,28 @@ const GlitchText: FC<GlitchTextProps> = ({
   enableOnHover = false,
   className = "",
 }) => {
-  useEffect(() => {
-    if (glitchStyleInjected) return;
-    const style = document.createElement("style");
-    style.textContent = GLITCH_STYLE;
-    document.head.appendChild(style);
-    glitchStyleInjected = true;
-  }, []);
-
-  const inlineStyle = {
+  const inlineStyles: CustomCSSProperties = {
     "--after-duration": `${speed * 3}s`,
     "--before-duration": `${speed * 2}s`,
-  } as React.CSSProperties;
+    "--after-shadow": enableShadows ? "-5px 0 red" : "none",
+    "--before-shadow": enableShadows ? "5px 0 cyan" : "none",
+  };
 
-  const cls = [
-    "glitch-text",
-    !enableShadows ? "no-shadows" : "",
-    enableOnHover ? "on-hover" : "",
-    className,
-  ]
-    .filter(Boolean)
-    .join(" ");
+  const baseClasses =
+    "relative select-none cursor-pointer inline-block";
+
+  const pseudoClasses = !enableOnHover
+    ? "after:content-[attr(data-text)] after:absolute after:top-0 after:left-[10px] after:text-white after:bg-[#070a12] after:overflow-hidden after:[clip-path:inset(0_0_0_0)] after:[text-shadow:var(--after-shadow)] after:animate-glitch-after " +
+    "before:content-[attr(data-text)] before:absolute before:top-0 before:left-[-10px] before:text-white before:bg-[#070a12] before:overflow-hidden before:[clip-path:inset(0_0_0_0)] before:[text-shadow:var(--before-shadow)] before:animate-glitch-before"
+    : "after:content-[''] after:absolute after:top-0 after:left-[10px] after:text-white after:bg-[#070a12] after:overflow-hidden after:[clip-path:inset(0_0_0_0)] after:opacity-0 " +
+    "before:content-[''] before:absolute before:top-0 before:left-[-10px] before:text-white before:bg-[#070a12] before:overflow-hidden before:[clip-path:inset(0_0_0_0)] before:opacity-0 " +
+    "hover:after:content-[attr(data-text)] hover:after:opacity-100 hover:after:[text-shadow:var(--after-shadow)] hover:after:animate-glitch-after " +
+    "hover:before:content-[attr(data-text)] hover:before:opacity-100 hover:before:[text-shadow:var(--before-shadow)] hover:before:animate-glitch-before";
+
+  const combinedClasses = `${baseClasses} ${pseudoClasses} ${className}`;
 
   return (
-    <span style={inlineStyle} data-text={children} className={cls}>
+    <span style={inlineStyles} data-text={children} className={combinedClasses}>
       {children}
     </span>
   );
@@ -359,22 +297,28 @@ export default function Hero({ setActiveSection }: { setActiveSection: (section:
 
             {/* title */}
             <h1 className="font-semibold tracking-tight text-white leading-[0.98] text-[clamp(34px,9vw,72px)]">
-              <GlitchText
-                speed={1}
-                enableShadows
-                enableOnHover={false}
-                className="bg-gradient-to-r from-white via-white to-white/80 bg-clip-text text-transparent font-semibold tracking-tight leading-[0.98] text-[clamp(34px,9vw,72px)]"
-              >
-                Alexander
-              </GlitchText>{" "}
-              <GlitchText
-                speed={1.4}
-                enableShadows
-                enableOnHover={false}
-                className="bg-gradient-to-r from-cyan-300 via-sky-300 to-violet-300 bg-clip-text text-transparent font-semibold tracking-tight leading-[0.98] text-[clamp(34px,9vw,72px)]"
-              >
-                Ollyvio
-              </GlitchText>
+              <DecryptedText
+                text="Alexander"
+                speed={60}
+                maxIterations={14}
+                sequential
+                revealDirection="start"
+                animateOn="view"
+                className="text-white font-semibold"
+                encryptedClassName="text-white/30 font-semibold"
+                parentClassName="font-semibold tracking-tight leading-[0.98] text-[clamp(34px,9vw,72px)]"
+              />{" "}
+              <DecryptedText
+                text="Ollyvio"
+                speed={55}
+                maxIterations={14}
+                sequential
+                revealDirection="start"
+                animateOn="view"
+                className="bg-gradient-to-r from-cyan-300 via-sky-300 to-violet-300 bg-clip-text text-transparent font-semibold"
+                encryptedClassName="text-cyan-300/30 font-semibold"
+                parentClassName="font-semibold tracking-tight leading-[0.98] text-[clamp(34px,9vw,72px)]"
+              />
             </h1>
 
             <p className="max-w-[56ch] text-[13px] leading-relaxed text-white/70 sm:text-lg">
